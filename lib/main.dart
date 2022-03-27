@@ -1,0 +1,107 @@
+import 'package:blog/screens/login_page.dart';
+import 'package:blog/screens/postlist_page.dart';
+import 'package:blog/services/auth_service.dart';
+import 'package:blog/services/post_service.dart';
+import 'package:blog/config/ui_config.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+void main() {
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (context) => AuthService()),
+    ChangeNotifierProvider(create: (context) => Postservice()),
+  ], child: const MyApp()));
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const MyHomePage(title: 'Informatikus leszek blog'),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  final storage = FlutterSecureStorage();
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  String? token;
+  String? datas;
+
+  Future readToken() async {
+    SharedPreferences prefs = await _prefs;
+    if (kIsWeb) {
+      token = prefs.getString('token');
+    } else {
+      token = await storage.read(key: "token");
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                );
+              },
+              icon: const Icon(Icons.login))
+        ],
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Provider.of<AuthService>(context, listen: true).authenticated
+              ? Container(
+                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                  width: double.infinity,
+                  child: ElevatedButton(
+                      onPressed: () async {
+                        await readToken();
+                        Provider.of<Postservice>(context, listen: false)
+                            .getallPost(token: token);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  PostListScreen(token: token)),
+                        );
+                      },
+                      child: const Text('Adatlekérés',
+                          style: TextStyle(fontSize: UIconfig.mySize))))
+              : const Padding(
+                  padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                  child: Text(
+                    'Az adatok megjelenítéséhez be kell jelentkezni',
+                    style: UIconfig.myStyle,
+                  )),
+        ],
+      ),
+    );
+  }
+}
