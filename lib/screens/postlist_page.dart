@@ -24,6 +24,7 @@ class PostListScreen extends StatelessWidget {
                     var postitem = post.postlist[index];
                     return Container(
                         padding: const EdgeInsets.all(10),
+                        height: 80.0,
                         child: ElevatedButton(
                             onPressed: () {
                               Provider.of<Postservice>(context, listen: false)

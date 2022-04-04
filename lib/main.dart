@@ -81,12 +81,13 @@ class _MyHomePageState extends State<MyHomePage> {
         children: <Widget>[
           Container(
               padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+              height: 100.0,
               width: double.infinity,
               child: ElevatedButton(
                   onPressed: () async {
                     await readToken();
                     Provider.of<Postservice>(context, listen: false)
-                        .getallPost(token: token);
+                        .getallPost();
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -99,6 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
           isloggedin
               ? Container(
                   padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                  height: 100.0,
                   width: double.infinity,
                   child: ElevatedButton(
                       onPressed: () {

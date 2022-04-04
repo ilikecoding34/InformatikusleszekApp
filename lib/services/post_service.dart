@@ -8,19 +8,16 @@ class Postservice extends ChangeNotifier {
   var singlepost;
   final HttpConfig api = HttpConfig();
 
-  void getallPost({String? token}) async {
-    if (token == null) {
-      return;
-    } else {
-      try {
-        api.response = await api.dio.get('/posts',
-            options: Options(headers: {'Authorization': 'Bearer $token'}));
-        var _adat = api.response!.data;
-        postlist = _adat.map((e) => PostModel.fromJson(e)).toList();
-        notifyListeners();
-      } catch (e) {
-        print(e);
-      }
+  void getallPost() async {
+    try {
+      api.response = await api.dio.get(
+        '/posts',
+      );
+      var _adat = api.response!.data;
+      postlist = _adat.map((e) => PostModel.fromJson(e)).toList();
+      notifyListeners();
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -46,6 +43,26 @@ class Postservice extends ChangeNotifier {
           options: Options(headers: {'Authorization': 'Bearer $token'}),
           data: datas,
         );
+        notifyListeners();
+      } catch (e) {
+        print(e);
+      }
+    }
+  }
+
+  Future storeComment({String? token, required Map datas}) async {
+    if (token == null) {
+      return;
+    } else {
+      try {
+        api.response = await api.dio.post(
+          '/newcomment',
+          options: Options(headers: {'Authorization': 'Bearer $token'}),
+          data: datas,
+        );
+        var _adat = api.response!.data;
+        singlepost = _adat[0];
+        print(singlepost);
         notifyListeners();
       } catch (e) {
         print(e);

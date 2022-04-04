@@ -1,3 +1,4 @@
+import 'package:blog/config/ui_config.dart';
 import 'package:blog/services/post_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -54,19 +55,21 @@ class NewPostPage extends StatelessWidget {
                 )),
             Container(
                 padding: const EdgeInsets.all(10),
+                width: 300.0,
+                height: 100.0,
                 child: ElevatedButton(
-                  child: const Text('Új bejegyzés'),
+                  child: const Text('Új bejegyzés',
+                      style: TextStyle(fontSize: UIconfig.mySize)),
                   onPressed: () async {
-                    Map creds = {
+                    Map datas = {
                       'userid': 1,
                       'title': title.text,
                       'content': body.text,
                       'category': 1
                     };
                     await readToken();
-                    print(token);
                     Provider.of<Postservice>(context, listen: false)
-                        .storePost(token: token, datas: creds)
+                        .storePost(token: token, datas: datas)
                         .then((value) => {Navigator.pop(context)});
                   },
                 ))
