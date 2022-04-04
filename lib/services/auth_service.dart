@@ -25,11 +25,11 @@ class AuthService extends ChangeNotifier {
   Future login({Map? creds}) async {
     _isloggedin = false;
     try {
-      api.response = await api.dio.post('/login', data: creds);
-
-      String token = api.response!.data['token'].toString();
-      userid = api.response!.data['user_id'].toString();
-
+      String? token;
+      api.response = await api.dio.post('/login', data: creds).then((value) {
+        token = value.data['token'].toString();
+        userid = value.data['user_id'].toString();
+      });
       storeToken(token: token);
 
       if (token != null) {
@@ -37,7 +37,7 @@ class AuthService extends ChangeNotifier {
       }
       notifyListeners();
     } catch (e) {
-      authfailed = true;
+      print(e);
       notifyListeners();
     }
   }

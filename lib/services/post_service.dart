@@ -25,14 +25,27 @@ class Postservice extends ChangeNotifier {
   }
 
   void getPost({String? token, int? id}) async {
+    try {
+      api.response = await api.dio.get('/post/$id',
+          options: Options(headers: {'Authorization': 'Bearer $token'}));
+      var _adat = api.response!.data;
+      singlepost = _adat[0];
+      notifyListeners();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future storePost({String? token, required Map datas}) async {
     if (token == null) {
       return;
     } else {
       try {
-        api.response = await api.dio.get('/post/$id',
-            options: Options(headers: {'Authorization': 'Bearer $token'}));
-        var _adat = api.response!.data;
-        singlepost = _adat[0];
+        api.response = await api.dio.post(
+          '/newpost',
+          options: Options(headers: {'Authorization': 'Bearer $token'}),
+          data: datas,
+        );
         notifyListeners();
       } catch (e) {
         print(e);

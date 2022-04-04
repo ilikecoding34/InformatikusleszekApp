@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class PostListScreen extends StatelessWidget {
-  PostListScreen({Key? key, required this.token}) : super(key: key);
+  PostListScreen({Key? key, required this.title}) : super(key: key);
 
-  String? token;
+  String? title;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class PostListScreen extends StatelessWidget {
                         child: ElevatedButton(
                             onPressed: () {
                               Provider.of<Postservice>(context, listen: false)
-                                  .getPost(token: token, id: index + 1);
+                                  .getPost(id: index + 1);
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(

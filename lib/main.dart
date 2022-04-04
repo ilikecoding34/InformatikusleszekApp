@@ -1,4 +1,5 @@
 import 'package:blog/screens/login_page.dart';
+import 'package:blog/screens/newpost_page.dart';
 import 'package:blog/screens/postlist_page.dart';
 import 'package:blog/services/auth_service.dart';
 import 'package:blog/services/post_service.dart';
@@ -59,6 +60,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    bool isloggedin =
+        Provider.of<AuthService>(context, listen: true).authenticated;
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -76,30 +79,39 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          Provider.of<AuthService>(context, listen: true).authenticated
+          Container(
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+              width: double.infinity,
+              child: ElevatedButton(
+                  onPressed: () async {
+                    await readToken();
+                    Provider.of<Postservice>(context, listen: false)
+                        .getallPost(token: token);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              PostListScreen(title: 'Bejegyzés lista')),
+                    );
+                  },
+                  child: const Text('Adatlekérés',
+                      style: TextStyle(fontSize: UIconfig.mySize)))),
+          isloggedin
               ? Container(
                   padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                   width: double.infinity,
                   child: ElevatedButton(
-                      onPressed: () async {
-                        await readToken();
-                        Provider.of<Postservice>(context, listen: false)
-                            .getallPost(token: token);
+                      onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  PostListScreen(token: token)),
+                                  NewPostPage(pagetitle: 'Új bejegyzés')),
                         );
                       },
-                      child: const Text('Adatlekérés',
+                      child: const Text('Új bejegyzés',
                           style: TextStyle(fontSize: UIconfig.mySize))))
-              : const Padding(
-                  padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                  child: Text(
-                    'Az adatok megjelenítéséhez be kell jelentkezni',
-                    style: UIconfig.myStyle,
-                  )),
+              : Container()
         ],
       ),
     );
