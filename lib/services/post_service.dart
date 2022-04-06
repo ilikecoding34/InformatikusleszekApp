@@ -1,12 +1,34 @@
 import 'package:blog/config/http_config.dart';
 import 'package:blog/models/post_model.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Postservice extends ChangeNotifier {
+  bool collapse = false;
   List<dynamic> postlist = [];
   var singlepost;
   final HttpConfig api = HttpConfig();
+
+  final storage = FlutterSecureStorage();
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  String? token;
+
+  Future readToken() async {
+    SharedPreferences prefs = await _prefs;
+    if (kIsWeb) {
+      token = prefs.getString('token');
+    } else {
+      token = await storage.read(key: "token");
+    }
+  }
+
+  void coll() {
+    collapse = !collapse;
+    notifyListeners();
+  }
 
   void getallPost() async {
     try {
@@ -33,7 +55,8 @@ class Postservice extends ChangeNotifier {
     }
   }
 
-  Future storePost({String? token, required Map datas}) async {
+  Future storePost({required Map datas}) async {
+    await readToken();
     if (token == null) {
       return;
     } else {
@@ -50,7 +73,8 @@ class Postservice extends ChangeNotifier {
     }
   }
 
-  Future storeComment({String? token, required Map datas}) async {
+  Future storeComment({required Map datas}) async {
+    await readToken();
     if (token == null) {
       return;
     } else {
@@ -61,9 +85,9 @@ class Postservice extends ChangeNotifier {
           data: datas,
         );
         var _adat = api.response!.data;
-        singlepost = _adat[0];
-        print(singlepost);
+        singlepost = _adat;
         notifyListeners();
+        return _adat['id'];
       } catch (e) {
         print(e);
       }

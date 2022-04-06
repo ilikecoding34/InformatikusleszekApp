@@ -3,6 +3,8 @@ import 'package:blog/services/post_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'login_page.dart';
+
 class PostListScreen extends StatelessWidget {
   PostListScreen({Key? key, required this.title}) : super(key: key);
 
@@ -13,6 +15,17 @@ class PostListScreen extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: const Text('Bejegyzések'),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const LoginScreen()),
+                  );
+                },
+                icon: const Icon(Icons.login))
+          ],
         ),
         body: Consumer<Postservice>(
           builder: (context, post, child) {
@@ -28,6 +41,8 @@ class PostListScreen extends StatelessWidget {
                         child: ElevatedButton(
                             onPressed: () {
                               Provider.of<Postservice>(context, listen: false)
+                                  .collapse = true;
+                              Provider.of<Postservice>(context, listen: false)
                                   .getPost(id: index + 1);
                               Navigator.push(
                                 context,
@@ -41,7 +56,6 @@ class PostListScreen extends StatelessWidget {
                               children: [
                                 Text(postitem.title,
                                     style: const TextStyle(fontSize: 20.0)),
-                                Text(postitem.body)
                               ],
                             )));
                   });

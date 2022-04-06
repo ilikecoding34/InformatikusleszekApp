@@ -1,5 +1,4 @@
 import 'package:blog/config/ui_config.dart';
-import 'package:blog/main.dart';
 import 'package:blog/services/auth_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +37,8 @@ class _LoginScreenState extends State<LoginScreen> {
         appBar: AppBar(
           title: const Text('Bejelentkezés'),
         ),
-        body: Column(
+        body: SingleChildScrollView(
+            child: Column(
           children: [
             Visibility(
               child: Padding(
@@ -85,6 +85,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         : const Text('Belépés',
                             style: TextStyle(fontSize: UIconfig.mySize))))
           ],
-        ));
+        )));
   }
 }

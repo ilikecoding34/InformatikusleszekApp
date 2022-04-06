@@ -2,27 +2,13 @@ import 'package:blog/config/ui_config.dart';
 import 'package:blog/services/post_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class NewPostPage extends StatelessWidget {
   NewPostPage({Key? key, required this.pagetitle}) : super(key: key);
   String? pagetitle;
 
-  final storage = FlutterSecureStorage();
-  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  String? token;
   String? datas;
-
-  Future readToken() async {
-    SharedPreferences prefs = await _prefs;
-    if (kIsWeb) {
-      token = prefs.getString('token');
-    } else {
-      token = await storage.read(key: "token");
-    }
-  }
 
   TextEditingController title = TextEditingController();
   TextEditingController body = TextEditingController();
@@ -67,9 +53,8 @@ class NewPostPage extends StatelessWidget {
                       'content': body.text,
                       'category': 1
                     };
-                    await readToken();
-                    Provider.of<Postservice>(context, listen: false)
-                        .storePost(token: token, datas: datas)
+                    await Provider.of<Postservice>(context, listen: false)
+                        .storePost(datas: datas)
                         .then((value) => {Navigator.pop(context)});
                   },
                 ))
