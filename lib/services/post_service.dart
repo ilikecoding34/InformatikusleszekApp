@@ -25,7 +25,7 @@ class Postservice extends ChangeNotifier {
     }
   }
 
-  void coll() {
+  void changecollapse() {
     collapse = !collapse;
     notifyListeners();
   }
@@ -43,12 +43,13 @@ class Postservice extends ChangeNotifier {
     }
   }
 
-  void getPost({String? token, int? id}) async {
+  void getPost({int? id}) async {
     try {
-      api.response = await api.dio.get('/post/$id',
-          options: Options(headers: {'Authorization': 'Bearer $token'}));
+      api.response = await api.dio.get(
+        '/post/$id',
+      );
       var _adat = api.response!.data;
-      singlepost = _adat[0];
+      singlepost = _adat;
       notifyListeners();
     } catch (e) {
       print(e);
@@ -84,10 +85,27 @@ class Postservice extends ChangeNotifier {
           options: Options(headers: {'Authorization': 'Bearer $token'}),
           data: datas,
         );
-        var _adat = api.response!.data;
-        singlepost = _adat;
         notifyListeners();
-        return _adat['id'];
+        return api.response!.data['id'];
+      } catch (e) {
+        print(e);
+      }
+    }
+  }
+
+  Future deleteComment({required Map datas}) async {
+    await readToken();
+    if (token == null) {
+      return;
+    } else {
+      try {
+        api.response = await api.dio.post(
+          '/deletecomment',
+          options: Options(headers: {'Authorization': 'Bearer $token'}),
+          data: datas,
+        );
+        notifyListeners();
+        return api.response!.data['id'];
       } catch (e) {
         print(e);
       }

@@ -19,46 +19,48 @@ class NewPostPage extends StatelessWidget {
         appBar: AppBar(
           title: const Text('Bejelentkezés'),
         ),
-        body: Column(
-          children: [
-            Container(
-                padding: const EdgeInsets.all(10),
-                child: TextField(
-                  controller: title,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Cím',
-                  ),
-                )),
-            Container(
-                padding: const EdgeInsets.all(10),
-                child: TextField(
-                  controller: body,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Tartalom',
-                  ),
-                )),
-            Container(
-                padding: const EdgeInsets.all(10),
-                width: 300.0,
-                height: 100.0,
-                child: ElevatedButton(
-                  child: const Text('Új bejegyzés',
-                      style: TextStyle(fontSize: UIconfig.mySize)),
-                  onPressed: () async {
-                    Map datas = {
-                      'userid': 1,
-                      'title': title.text,
-                      'content': body.text,
-                      'category': 1
-                    };
-                    await Provider.of<Postservice>(context, listen: false)
-                        .storePost(datas: datas)
-                        .then((value) => {Navigator.pop(context)});
-                  },
-                ))
-          ],
-        ));
+        body: SingleChildScrollView(
+            reverse: true,
+            child: Column(
+              children: [
+                Container(
+                    padding: const EdgeInsets.all(10),
+                    child: TextField(
+                      controller: title,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Cím',
+                      ),
+                    )),
+                Container(
+                    padding: const EdgeInsets.all(10),
+                    child: TextField(
+                      controller: body,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Tartalom',
+                      ),
+                    )),
+                Container(
+                    padding: const EdgeInsets.all(10),
+                    width: 300.0,
+                    height: 100.0,
+                    child: ElevatedButton(
+                      child: const Text('Új bejegyzés',
+                          style: TextStyle(fontSize: UIconfig.mySize)),
+                      onPressed: () async {
+                        Map datas = {
+                          'userid': 1,
+                          'title': title.text,
+                          'content': body.text,
+                          'category': 1
+                        };
+                        await Provider.of<Postservice>(context, listen: false)
+                            .storePost(datas: datas)
+                            .then((value) => {Navigator.pop(context)});
+                      },
+                    ))
+              ],
+            )));
   }
 }
