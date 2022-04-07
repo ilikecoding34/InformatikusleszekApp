@@ -39,6 +39,15 @@ class SinglePostScreen extends StatelessWidget {
         body: Consumer<Postservice>(builder: (context, post, child) {
           if (post.singlepost != null) {
             bool show = Provider.of<Postservice>(context).collapse;
+            PostModel getpost = PostModel(
+                post.singlepost['id'],
+                post.singlepost['body'],
+                post.singlepost['title'],
+                post.singlepost['comments']);
+            List<CommentModel> commentlist = [];
+            for (var com in post.singlepost['comments']) {
+              commentlist.add(CommentModel.fromJson(com));
+            }
             return SingleChildScrollView(
                 reverse: true,
                 child: Column(
@@ -46,13 +55,13 @@ class SinglePostScreen extends StatelessWidget {
                   children: [
                     Container(
                         padding: const EdgeInsets.all(10),
-                        child: Text(post.singlepost['title'],
+                        child: Text(getpost.title,
                             style: const TextStyle(fontSize: 30.0))),
                     Container(
                         padding: const EdgeInsets.all(10),
-                        child: Text(post.singlepost['body'],
+                        child: Text(getpost.body,
                             style: const TextStyle(fontSize: 20.0))),
-                    post.singlepost['comments'].length > 0
+                    commentlist.isNotEmpty
                         ? Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -71,7 +80,7 @@ class SinglePostScreen extends StatelessWidget {
                             ],
                           )
                         : Container(),
-                    post.singlepost['comments'].length > 0
+                    commentlist.isNotEmpty
                         ? AnimatedContainer(
                             duration: const Duration(seconds: 1),
                             height: show ? 0 : 300,
@@ -82,7 +91,7 @@ class SinglePostScreen extends StatelessWidget {
                                     ),
                                 padding: const EdgeInsets.all(8),
                                 shrinkWrap: true,
-                                itemCount: post.singlepost['comments'].length,
+                                itemCount: commentlist.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   return Container(
                                     decoration: BoxDecoration(
@@ -97,7 +106,7 @@ class SinglePostScreen extends StatelessWidget {
                                     child: Row(
                                       children: [
                                         Text(
-                                          '${index + 1}: ${post.singlepost['comments'][index]['body']}',
+                                          '${index + 1}: ${commentlist[index].body}',
                                           style:
                                               const TextStyle(fontSize: 15.0),
                                           textAlign: TextAlign.center,
@@ -107,11 +116,8 @@ class SinglePostScreen extends StatelessWidget {
                                                 onPressed: () {
                                                   Map datas = {
                                                     'commentid':
-                                                        post.singlepost[
-                                                                'comments']
-                                                            [index]['id'],
-                                                    'postid':
-                                                        post.singlepost['id']
+                                                        commentlist[index].id,
+                                                    'postid': getpost.id
                                                   };
                                                   Provider.of<Postservice>(
                                                           context,
@@ -154,7 +160,7 @@ class SinglePostScreen extends StatelessWidget {
                                       Map datas = {
                                         'userid': 1,
                                         'content': titlecontroller.text,
-                                        'postid': post.singlepost['id'],
+                                        'postid': getpost.id,
                                       };
                                       Provider.of<Postservice>(context,
                                               listen: false)
