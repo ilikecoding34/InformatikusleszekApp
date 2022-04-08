@@ -2,6 +2,7 @@ import 'package:blog/screens/login_page.dart';
 import 'package:blog/screens/newpost_page.dart';
 import 'package:blog/screens/postlist_page.dart';
 import 'package:blog/services/auth_service.dart';
+import 'package:blog/services/comment_service.dart';
 import 'package:blog/services/post_service.dart';
 import 'package:blog/config/ui_config.dart';
 import 'package:flutter/foundation.dart';
@@ -13,7 +14,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => AuthService()),
-    ChangeNotifierProvider(create: (context) => Postservice()),
+    ChangeNotifierProvider(create: (context) => PostService()),
+    ChangeNotifierProvider(create: (context) => CommentService()),
   ], child: const MyApp()));
 }
 
@@ -86,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
               child: ElevatedButton(
                   onPressed: () async {
                     await readToken();
-                    Provider.of<Postservice>(context, listen: false)
+                    Provider.of<PostService>(context, listen: false)
                         .getallPost();
                     Navigator.push(
                       context,

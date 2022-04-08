@@ -27,7 +27,7 @@ class PostListScreen extends StatelessWidget {
                 icon: const Icon(Icons.login))
           ],
         ),
-        body: Consumer<Postservice>(
+        body: Consumer<PostService>(
           builder: (context, post, child) {
             if (post.postlist.isNotEmpty) {
               return ListView.builder(
@@ -40,9 +40,9 @@ class PostListScreen extends StatelessWidget {
                         height: 80.0,
                         child: ElevatedButton(
                             onPressed: () {
-                              Provider.of<Postservice>(context, listen: false)
+                              Provider.of<PostService>(context, listen: false)
                                   .collapse = true;
-                              Provider.of<Postservice>(context, listen: false)
+                              Provider.of<PostService>(context, listen: false)
                                   .getPost(id: index + 1);
                               Navigator.push(
                                 context,

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class PostService extends ChangeNotifier {
+class CommentService extends ChangeNotifier {
   bool collapse = false;
   List<dynamic> postlist = [];
   PostModel? singlepost;
@@ -25,50 +25,38 @@ class PostService extends ChangeNotifier {
     }
   }
 
-  void changecollapse() {
-    collapse = !collapse;
-    notifyListeners();
-  }
-
-  void getallPost() async {
-    try {
-      api.response = await api.dio.get(
-        '/posts',
-      );
-      var _adat = api.response!.data;
-      postlist = _adat.map((e) => PostModel.fromJson(e)).toList();
-      notifyListeners();
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  void getPost({int? id}) async {
-    try {
-      api.response = await api.dio.get(
-        '/post/$id',
-      );
-      var _adat = api.response!.data;
-      singlepost = PostModel(_adat['id'], _adat['title'], _adat['link'],
-          _adat['body'], _adat['comments']);
-      notifyListeners();
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  Future storePost({required Map datas}) async {
+  Future storeComment({required Map datas}) async {
     await readToken();
     if (token == null) {
       return;
     } else {
       try {
         api.response = await api.dio.post(
-          '/newpost',
+          '/newcomment',
           options: Options(headers: {'Authorization': 'Bearer $token'}),
           data: datas,
         );
         notifyListeners();
+        return api.response!.data['id'];
+      } catch (e) {
+        print(e);
+      }
+    }
+  }
+
+  Future deleteComment({required Map datas}) async {
+    await readToken();
+    if (token == null) {
+      return;
+    } else {
+      try {
+        api.response = await api.dio.post(
+          '/deletecomment',
+          options: Options(headers: {'Authorization': 'Bearer $token'}),
+          data: datas,
+        );
+        notifyListeners();
+        return api.response!.data['id'];
       } catch (e) {
         print(e);
       }

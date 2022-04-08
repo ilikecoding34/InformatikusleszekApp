@@ -1,4 +1,5 @@
 import 'package:blog/config/ui_config.dart';
+import 'package:blog/services/auth_service.dart';
 import 'package:blog/services/post_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ class NewPostPage extends StatelessWidget {
   String? datas;
 
   TextEditingController title = TextEditingController();
+  TextEditingController link = TextEditingController();
   TextEditingController body = TextEditingController();
 
   @override
@@ -35,6 +37,15 @@ class NewPostPage extends StatelessWidget {
                 Container(
                     padding: const EdgeInsets.all(10),
                     child: TextField(
+                      controller: link,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Url - opcionális',
+                      ),
+                    )),
+                Container(
+                    padding: const EdgeInsets.all(10),
+                    child: TextField(
                       controller: body,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
@@ -50,12 +61,13 @@ class NewPostPage extends StatelessWidget {
                           style: TextStyle(fontSize: UIconfig.mySize)),
                       onPressed: () async {
                         Map datas = {
-                          'userid': 1,
+                          'userid': Provider.of<AuthService>(context).userid,
                           'title': title.text,
+                          'link': link.text,
                           'content': body.text,
                           'category': 1
                         };
-                        await Provider.of<Postservice>(context, listen: false)
+                        await Provider.of<PostService>(context, listen: false)
                             .storePost(datas: datas)
                             .then((value) => {Navigator.pop(context)});
                       },
