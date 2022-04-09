@@ -1,3 +1,4 @@
+import 'package:blog/models/post_model.dart';
 import 'package:blog/screens/singlepost_page.dart';
 import 'package:blog/services/post_service.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +35,7 @@ class PostListScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(8),
                   itemCount: post.postlist.length,
                   itemBuilder: (BuildContext context, int index) {
-                    var postitem = post.postlist[index];
+                    PostModel postitem = post.postlist[index];
                     return Container(
                         padding: const EdgeInsets.all(10),
                         height: 80.0,
@@ -43,7 +44,7 @@ class PostListScreen extends StatelessWidget {
                               Provider.of<PostService>(context, listen: false)
                                   .collapse = true;
                               Provider.of<PostService>(context, listen: false)
-                                  .getPost(id: index + 1);
+                                  .getPost(id: postitem.id);
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(

@@ -10,6 +10,7 @@ class CommentService extends ChangeNotifier {
   bool collapse = false;
   List<dynamic> postlist = [];
   PostModel? singlepost;
+  bool commentedit = false;
   final HttpConfig api = HttpConfig();
 
   final storage = FlutterSecureStorage();
@@ -25,6 +26,11 @@ class CommentService extends ChangeNotifier {
     }
   }
 
+  void changecomment() {
+    commentedit = !commentedit;
+    notifyListeners();
+  }
+
   Future storeComment({required Map datas}) async {
     await readToken();
     if (token == null) {
@@ -33,6 +39,25 @@ class CommentService extends ChangeNotifier {
       try {
         api.response = await api.dio.post(
           '/newcomment',
+          options: Options(headers: {'Authorization': 'Bearer $token'}),
+          data: datas,
+        );
+        notifyListeners();
+        return api.response!.data['id'];
+      } catch (e) {
+        print(e);
+      }
+    }
+  }
+
+  Future modifyComment({required Map datas}) async {
+    await readToken();
+    if (token == null) {
+      return;
+    } else {
+      try {
+        api.response = await api.dio.post(
+          '/modifycomment',
           options: Options(headers: {'Authorization': 'Bearer $token'}),
           data: datas,
         );

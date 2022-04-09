@@ -4,6 +4,7 @@ import 'package:blog/models/post_model.dart';
 import 'package:blog/services/auth_service.dart';
 import 'package:blog/services/comment_service.dart';
 import 'package:blog/services/post_service.dart';
+import 'package:blog/widgets/comment_tile.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +16,8 @@ class SinglePostScreen extends StatelessWidget {
   SinglePostScreen({Key? key, required this.title});
 
   final String title;
-  TextEditingController titlecontroller = TextEditingController();
+  TextEditingController newcommentcontroller = TextEditingController();
+  List<TextEditingController> commentcontroller = [];
 
   String? datas;
 
@@ -32,19 +34,25 @@ class SinglePostScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isloggedin =
         Provider.of<AuthService>(context, listen: true).authenticated;
+    bool isEditing =
+        Provider.of<CommentService>(context, listen: true).commentedit;
     return Scaffold(
         appBar: AppBar(
           title: Text(title),
           actions: [
-            IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const LoginScreen()),
-                  );
-                },
-                icon: const Icon(Icons.login))
+            isloggedin
+                ? Container(
+                    padding: const EdgeInsets.all(10),
+                    child: const Icon(Icons.check))
+                : IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LoginScreen()),
+                      );
+                    },
+                    icon: const Icon(Icons.login))
           ],
         ),
         body: Consumer<PostService>(builder: (context, post, child) {
@@ -109,54 +117,16 @@ class SinglePostScreen extends StatelessWidget {
                                 shrinkWrap: true,
                                 itemCount: commentlist.length,
                                 itemBuilder: (BuildContext context, int index) {
-                                  return Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey,
-                                      border: Border.all(
-                                        color: Colors.black,
-                                        width: 2,
-                                      ),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    padding: const EdgeInsets.all(10),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Flexible(
-                                            child: Text(
-                                          '${commentlist[index].body}',
-                                          style:
-                                              const TextStyle(fontSize: 15.0),
-                                          textAlign: TextAlign.center,
-                                        )),
-                                        isloggedin
-                                            ? IconButton(
-                                                onPressed: () {
-                                                  Map datas = {
-                                                    'commentid':
-                                                        commentlist[index].id,
-                                                    'userid': commentlist[index]
-                                                        .userId,
-                                                    'postid': commentlist[index]
-                                                        .postId
-                                                  };
-                                                  Provider.of<CommentService>(
-                                                          context,
-                                                          listen: false)
-                                                      .deleteComment(
-                                                          datas: datas)
-                                                      .then((value) => Provider
-                                                              .of<PostService>(
-                                                                  context,
-                                                                  listen: false)
-                                                          .getPost(id: value));
-                                                },
-                                                icon: Icon(Icons.delete))
-                                            : Container()
-                                      ],
-                                    ),
-                                  );
+                                  TextEditingController comedit =
+                                      TextEditingController();
+                                  commentcontroller.add(comedit);
+                                  return CommentTile(
+                                      commentlist: commentlist,
+                                      commentcontroller: commentcontroller,
+                                      getpost: getpost,
+                                      index: index,
+                                      isEditing: isEditing,
+                                      isloggedin: isloggedin);
                                 }))
                         : Container(),
                     isloggedin
@@ -167,7 +137,7 @@ class SinglePostScreen extends StatelessWidget {
                                   minLines: 1,
                                   maxLines: 5,
                                   keyboardType: TextInputType.multiline,
-                                  controller: titlecontroller,
+                                  controller: newcommentcontroller,
                                   decoration: const InputDecoration(
                                     border: OutlineInputBorder(),
                                     labelText: 'Új hozzászólás',
@@ -181,7 +151,7 @@ class SinglePostScreen extends StatelessWidget {
                                     onPressed: () async {
                                       Map datas = {
                                         'userid': 1,
-                                        'content': titlecontroller.text,
+                                        'content': newcommentcontroller.text,
                                         'postid': getpost.id,
                                       };
                                       Provider.of<CommentService>(context,
@@ -193,7 +163,7 @@ class SinglePostScreen extends StatelessWidget {
                                                         listen: false)
                                                     .getPost(id: value)
                                               });
-                                      titlecontroller.clear();
+                                      newcommentcontroller.clear();
                                     },
                                     child: const Text('Hozzászólás mentése',
                                         style: TextStyle(

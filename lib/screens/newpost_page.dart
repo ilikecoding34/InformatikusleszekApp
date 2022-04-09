@@ -61,7 +61,7 @@ class NewPostPage extends StatelessWidget {
                           style: TextStyle(fontSize: UIconfig.mySize)),
                       onPressed: () async {
                         Map datas = {
-                          'userid': Provider.of<AuthService>(context).userid,
+                          'userid': 1,
                           'title': title.text,
                           'link': link.text,
                           'content': body.text,
