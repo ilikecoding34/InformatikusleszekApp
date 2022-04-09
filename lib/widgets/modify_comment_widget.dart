@@ -23,17 +23,16 @@ class ModifyComment extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
         icon: const Icon(Icons.save),
-        onPressed: () {
+        onPressed: () async {
           Map datas = {
             'id': commentlist[index].id,
             'content': commentcontroller[index].text,
             'postid': getpost.id,
           };
-          Provider.of<CommentService>(context, listen: false)
+          await Provider.of<CommentService>(context, listen: false)
               .modifyComment(datas: datas)
               .then((value) => Provider.of<PostService>(context, listen: false)
                   .getPost(id: value));
-          Provider.of<CommentService>(context, listen: false).changecomment();
         });
   }
 }

@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class PostService extends ChangeNotifier {
   bool collapse = false;
+  bool postedit = false;
   List<dynamic> postlist = [];
   PostModel? singlepost;
   final HttpConfig api = HttpConfig();
@@ -30,7 +31,12 @@ class PostService extends ChangeNotifier {
     notifyListeners();
   }
 
-  void getallPost() async {
+  void setToModify() {
+    postedit = !postedit;
+    notifyListeners();
+  }
+
+  Future getallPost() async {
     try {
       api.response = await api.dio.get(
         '/posts',
@@ -54,6 +60,27 @@ class PostService extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print(e);
+    }
+  }
+
+  Future modifyPost({required Map datas}) async {
+    await readToken();
+    if (token == null) {
+      return;
+    } else {
+      try {
+        api.response = await api.dio.post(
+          '/modifypost',
+          options: Options(headers: {'Authorization': 'Bearer $token'}),
+          data: datas,
+        );
+        var _adat = api.response!.data;
+        postedit = false;
+        notifyListeners();
+        return _adat['id'];
+      } catch (e) {
+        print(e);
+      }
     }
   }
 

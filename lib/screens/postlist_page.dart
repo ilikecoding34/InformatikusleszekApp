@@ -1,5 +1,6 @@
 import 'package:blog/models/post_model.dart';
 import 'package:blog/screens/singlepost_page.dart';
+import 'package:blog/services/auth_service.dart';
 import 'package:blog/services/post_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,19 +14,25 @@ class PostListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isloggedin =
+        Provider.of<AuthService>(context, listen: true).authenticated;
     return Scaffold(
         appBar: AppBar(
           title: const Text('Bejegyzések'),
           actions: [
-            IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const LoginScreen()),
-                  );
-                },
-                icon: const Icon(Icons.login))
+            isloggedin
+                ? Container(
+                    padding: const EdgeInsets.all(10),
+                    child: const Icon(Icons.check))
+                : IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LoginScreen()),
+                      );
+                    },
+                    icon: const Icon(Icons.login))
           ],
         ),
         body: Consumer<PostService>(
@@ -61,7 +68,7 @@ class PostListScreen extends StatelessWidget {
                             )));
                   });
             } else {
-              return Container();
+              return CircularProgressIndicator(value: null);
             }
           },
         ));

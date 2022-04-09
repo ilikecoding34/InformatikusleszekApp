@@ -87,8 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
               width: double.infinity,
               child: ElevatedButton(
                   onPressed: () async {
-                    await readToken();
-                    Provider.of<PostService>(context, listen: false)
+                    await Provider.of<PostService>(context, listen: false)
                         .getallPost();
                     Navigator.push(
                       context,

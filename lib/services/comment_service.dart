@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class CommentService extends ChangeNotifier {
   bool collapse = false;
   List<dynamic> postlist = [];
+  int? commentchangeid;
   PostModel? singlepost;
   bool commentedit = false;
   final HttpConfig api = HttpConfig();
@@ -26,8 +27,9 @@ class CommentService extends ChangeNotifier {
     }
   }
 
-  void changecomment() {
+  void changecomment(int index) {
     commentedit = !commentedit;
+    commentchangeid = index;
     notifyListeners();
   }
 
@@ -61,8 +63,9 @@ class CommentService extends ChangeNotifier {
           options: Options(headers: {'Authorization': 'Bearer $token'}),
           data: datas,
         );
+        commentedit = false;
         notifyListeners();
-        return api.response!.data['id'];
+        return datas['postid'];
       } catch (e) {
         print(e);
       }

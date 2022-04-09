@@ -40,7 +40,8 @@ class CommentTile extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          isEditing
+          isEditing &&
+                  Provider.of<CommentService>(context).commentchangeid == index
               ? Flexible(
                   child: TextField(
                   controller: commentcontroller[index],
@@ -55,7 +56,9 @@ class CommentTile extends StatelessWidget {
               ? DeleteComment(commentlist: commentlist, index: index)
               : Container(),
           isloggedin
-              ? isEditing
+              ? isEditing &&
+                      Provider.of<CommentService>(context).commentchangeid ==
+                          index
                   ? ModifyComment(
                       commentlist: commentlist,
                       commentcontroller: commentcontroller,
@@ -65,7 +68,7 @@ class CommentTile extends StatelessWidget {
                       icon: const Icon(Icons.edit),
                       onPressed: () {
                         Provider.of<CommentService>(context, listen: false)
-                            .changecomment();
+                            .changecomment(index);
                         commentcontroller[index].text =
                             commentlist[index].body.toString();
                       })
