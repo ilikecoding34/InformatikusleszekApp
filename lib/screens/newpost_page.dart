@@ -29,34 +29,67 @@ class NewPostPage extends StatelessWidget {
                     padding: const EdgeInsets.all(10),
                     child: TextField(
                       controller: title,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Cím',
-                      ),
+                      decoration: InputDecoration(
+                          labelText: 'Cím',
+                          enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(width: 3, color: Colors.blue),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(width: 3, color: Colors.lime),
+                            borderRadius: BorderRadius.circular(15),
+                          )),
                     )),
                 Container(
                     padding: const EdgeInsets.all(10),
                     child: TextField(
                       controller: link,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Url - opcionális',
-                      ),
+                      decoration: InputDecoration(
+                          labelText: 'Url - opcionális',
+                          enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(width: 3, color: Colors.blue),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(width: 3, color: Colors.lime),
+                            borderRadius: BorderRadius.circular(15),
+                          )),
                     )),
                 Container(
                     padding: const EdgeInsets.all(10),
                     child: TextField(
                       controller: body,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Tartalom',
-                      ),
+                      decoration: InputDecoration(
+                          labelText: 'Tartalom',
+                          enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(width: 3, color: Colors.blue),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(width: 3, color: Colors.lime),
+                            borderRadius: BorderRadius.circular(15),
+                          )),
                     )),
                 Container(
                     padding: const EdgeInsets.all(10),
                     width: 300.0,
                     height: 100.0,
                     child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          primary: Colors.cyan,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 50, vertical: 20),
+                          textStyle: const TextStyle(
+                              fontSize: 30, fontWeight: FontWeight.bold)),
                       child: const Text('Új bejegyzés',
                           style: TextStyle(fontSize: UIconfig.mySize)),
                       onPressed: () async {

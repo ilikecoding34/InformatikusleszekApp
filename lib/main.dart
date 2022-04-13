@@ -60,6 +60,22 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  Future loadall() async {
+    await Provider.of<PostService>(context, listen: false).getallPost();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => PostListScreen(title: 'Bejegyzés lista')),
+    );
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadall();
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isloggedin =

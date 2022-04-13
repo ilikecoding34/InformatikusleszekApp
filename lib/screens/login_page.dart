@@ -40,37 +40,69 @@ class _LoginScreenState extends State<LoginScreen> {
         body: SingleChildScrollView(
             child: Column(
           children: [
-            Visibility(
-              child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                  child: TextField(
-                    controller: _email,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Email',
-                    ),
-                  )),
-              visible: !loggedin,
-            ),
-            Visibility(
-              child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                  child: TextField(
-                    obscureText: true,
-                    controller: _password,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Jelszó',
-                    ),
-                  )),
-              visible: !loggedin,
-            ),
-            Container(
-                padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                width: 300.0,
-                height: 100.0,
-                child: ElevatedButton(
+            const Padding(
+                padding: EdgeInsets.only(
+                  top: 50,
+                  bottom: 50,
+                ),
+                child: Text('Informatikusleszek.hu',
+                    style: TextStyle(fontSize: 30.0))),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Visibility(
+                  child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                      child: TextField(
+                        controller: _email,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                            labelText: 'Email',
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 3, color: Colors.blue),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 3, color: Colors.lime),
+                              borderRadius: BorderRadius.circular(15),
+                            )),
+                      )),
+                  visible: !loggedin,
+                ),
+                Visibility(
+                  child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 40),
+                      child: TextField(
+                        obscureText: true,
+                        controller: _password,
+                        decoration: InputDecoration(
+                            labelText: 'Jelszó',
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 3, color: Colors.blue),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 3, color: Colors.lime),
+                              borderRadius: BorderRadius.circular(15),
+                            )),
+                      )),
+                  visible: !loggedin,
+                ),
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        primary: Colors.cyan,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 50, vertical: 20),
+                        textStyle: const TextStyle(
+                            fontSize: 30, fontWeight: FontWeight.bold)),
                     onPressed: () async {
                       Map creds = {
                         'email': _email.text,
@@ -83,7 +115,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: loggedin
                         ? const Text('Belépve')
                         : const Text('Belépés',
-                            style: TextStyle(fontSize: UIconfig.mySize))))
+                            style: TextStyle(fontSize: UIconfig.mySize)))
+              ],
+            )
           ],
         )));
   }

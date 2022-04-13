@@ -25,16 +25,29 @@ class NewComment extends StatelessWidget {
             maxLines: 5,
             keyboardType: TextInputType.multiline,
             controller: newcommentcontroller,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Új hozzászólás',
-            ),
+            decoration: InputDecoration(
+                labelText: 'Új hozzászólás',
+                enabledBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(width: 3, color: Colors.blue),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(width: 3, color: Colors.lime),
+                  borderRadius: BorderRadius.circular(15),
+                )),
           )),
       Container(
           padding: const EdgeInsets.all(10),
-          width: 300.0,
-          height: 70.0,
           child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  primary: Colors.cyan,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                  textStyle: const TextStyle(
+                      fontSize: 30, fontWeight: FontWeight.bold)),
               onPressed: () async {
                 Map datas = {
                   'userid': 1,
