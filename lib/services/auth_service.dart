@@ -1,19 +1,13 @@
 import 'package:blog/config/http_config.dart';
+import 'package:blog/services/sharedpreferences_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
 
 class AuthService extends ChangeNotifier {
-  final storage = new FlutterSecureStorage();
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  UserModel? _user;
-
-  String? token;
-  String? userid;
-
+  final shared = PreferencesService();
   final HttpConfig api = HttpConfig();
+  UserModel? _user;
 
   bool _isloggedin = false;
   bool authfailed = false;
@@ -26,11 +20,13 @@ class AuthService extends ChangeNotifier {
     _isloggedin = false;
     try {
       String? token;
+      String? userid;
       api.response = await api.dio.post('/login', data: creds).then((value) {
         token = value.data['token'].toString();
         userid = value.data['user_id'].toString();
       });
-      storeToken(token: token);
+
+      shared.storeToken(token: token, userid: userid);
 
       if (token != null) {
         _isloggedin = true;
@@ -39,17 +35,6 @@ class AuthService extends ChangeNotifier {
     } catch (e) {
       print(e);
       notifyListeners();
-    }
-  }
-
-  storeToken({String? token}) async {
-    SharedPreferences prefs = await _prefs;
-    if (kIsWeb) {
-      prefs.setString('token', token!);
-      prefs.setString('user_id', userid!);
-    } else {
-      storage.write(key: 'token', value: token);
-      storage.write(key: 'user_id', value: userid);
     }
   }
 }

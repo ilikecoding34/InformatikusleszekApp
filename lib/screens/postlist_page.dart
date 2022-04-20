@@ -104,13 +104,14 @@ class PostListScreen extends StatelessWidget {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
+                                Text('Szerző: ${postitem.user?.name}'),
                                 Text(postitem.title,
                                     style: const TextStyle(fontSize: 20.0)),
                               ],
                             )));
                   });
             } else {
-              return CircularProgressIndicator(value: null);
+              return Center(child: CircularProgressIndicator(value: null));
             }
           },
         ));

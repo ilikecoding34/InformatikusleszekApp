@@ -1,7 +1,6 @@
 import 'package:blog/models/comment_model.dart';
 import 'package:blog/models/post_model.dart';
 import 'package:blog/services/comment_service.dart';
-import 'package:blog/services/post_service.dart';
 import 'package:blog/widgets/delete_comment_widget.dart';
 import 'package:blog/widgets/modify_comment_widget.dart';
 import 'package:flutter/material.dart';
@@ -27,9 +26,11 @@ class CommentTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool edittile = isEditing &&
+        Provider.of<CommentService>(context).commentchangeid == index;
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey,
+        color: edittile ? Colors.blueGrey : Colors.grey,
         border: Border.all(
           color: Colors.black,
           width: 2,
@@ -40,10 +41,22 @@ class CommentTile extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          isEditing &&
-                  Provider.of<CommentService>(context).commentchangeid == index
+          edittile
               ? Flexible(
                   child: TextField(
+                  minLines: 1,
+                  maxLines: 5,
+                  decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(width: 3, color: Colors.blue),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(width: 3, color: Colors.lime),
+                        borderRadius: BorderRadius.circular(15),
+                      )),
                   controller: commentcontroller[index],
                 ))
               : Flexible(

@@ -1,10 +1,10 @@
 import 'package:blog/config/http_config.dart';
 import 'package:blog/models/post_model.dart';
+import 'package:blog/models/user_model.dart';
+import 'package:blog/services/sharedpreferences_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class PostService extends ChangeNotifier {
   bool collapse = false;
@@ -12,19 +12,7 @@ class PostService extends ChangeNotifier {
   List<dynamic> postlist = [];
   PostModel? singlepost;
   final HttpConfig api = HttpConfig();
-
-  final storage = FlutterSecureStorage();
-  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  String? token;
-
-  Future readToken() async {
-    SharedPreferences prefs = await _prefs;
-    if (kIsWeb) {
-      token = prefs.getString('token');
-    } else {
-      token = await storage.read(key: "token");
-    }
-  }
+  final shared = PreferencesService();
 
   void changecollapse() {
     collapse = !collapse;
@@ -55,8 +43,14 @@ class PostService extends ChangeNotifier {
         '/post/$id',
       );
       var _adat = api.response!.data;
-      singlepost = PostModel(_adat['id'], _adat['title'], _adat['link'],
-          _adat['body'], _adat['comments']);
+      print(_adat);
+      singlepost = PostModel(
+          _adat['id'],
+          _adat['title'],
+          _adat['link'],
+          _adat['body'],
+          UserModel(_adat['user']['email'], _adat['user']['name']),
+          _adat['comments']);
       notifyListeners();
     } catch (e) {
       print(e);
@@ -64,7 +58,7 @@ class PostService extends ChangeNotifier {
   }
 
   Future modifyPost({required Map datas}) async {
-    await readToken();
+    String? token = await shared.readToken();
     if (token == null) {
       return;
     } else {
@@ -85,7 +79,7 @@ class PostService extends ChangeNotifier {
   }
 
   Future storePost({required Map datas}) async {
-    await readToken();
+    String? token = await shared.readToken();
     if (token == null) {
       return;
     } else {

@@ -4,7 +4,7 @@ class UserModel {
 
   UserModel(this.email, this.name);
 
-  UserModel.fromJson(Map<String, dynamic> json)
+  UserModel.fromJson(json)
       : name = json['name'],
         email = json['email'];
 }

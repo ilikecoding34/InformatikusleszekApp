@@ -103,6 +103,8 @@ class NewPostPage extends StatelessWidget {
                         await Provider.of<PostService>(context, listen: false)
                             .storePost(datas: datas)
                             .then((value) => {Navigator.pop(context)});
+                        Provider.of<PostService>(context, listen: false)
+                            .getallPost();
                       },
                     ))
               ],
