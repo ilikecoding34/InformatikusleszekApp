@@ -5,17 +5,18 @@ import 'package:blog/services/auth_service.dart';
 import 'package:blog/services/comment_service.dart';
 import 'package:blog/services/post_service.dart';
 import 'package:blog/config/ui_config.dart';
+import 'package:blog/services/theme_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => AuthService()),
     ChangeNotifierProvider(create: (context) => PostService()),
     ChangeNotifierProvider(create: (context) => CommentService()),
+    ChangeNotifierProvider(
+        create: (context) => ThemeService(UIconfig.darkTheme)),
   ], child: const MyApp()));
 }
 
@@ -25,12 +26,11 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeService>(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: themeNotifier.getTheme(),
       home: const MyHomePage(title: 'Informatikus leszek blog'),
     );
   }
@@ -46,20 +46,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final storage = FlutterSecureStorage();
-  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  String? token;
-  String? datas;
-
-  Future readToken() async {
-    SharedPreferences prefs = await _prefs;
-    if (kIsWeb) {
-      token = prefs.getString('token');
-    } else {
-      token = await storage.read(key: "token");
-    }
-  }
-
   Future loadall() async {
     await Provider.of<PostService>(context, listen: false).getallPost();
     Navigator.push(

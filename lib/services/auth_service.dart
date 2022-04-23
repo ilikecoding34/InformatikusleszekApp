@@ -33,7 +33,7 @@ class AuthService extends ChangeNotifier {
       }
       notifyListeners();
     } catch (e) {
-      print(e);
+      //  print(e);
       notifyListeners();
     }
   }

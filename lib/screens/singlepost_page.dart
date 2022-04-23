@@ -46,7 +46,7 @@ class SinglePostScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text(title),
           leading: IconButton(
-              icon: Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back),
               onPressed: () {
                 Provider.of<PostService>(context, listen: false).getallPost();
                 Navigator.pop(context);
@@ -95,8 +95,6 @@ class SinglePostScreen extends StatelessWidget {
             posttitlecontroller.text = getpost!.title;
             postlinkcontroller.text = getpost.link ?? '';
             postbodycontroller.text = getpost.body;
-            List<CommentModel> commentlist =
-                getpost.comments!.map((i) => CommentModel.fromJson(i)).toList();
 
             return SingleChildScrollView(
                 reverse: true,
@@ -132,7 +130,7 @@ class SinglePostScreen extends StatelessWidget {
                             : TextField(
                                 controller: postbodycontroller,
                               )),
-                    commentlist.isNotEmpty
+                    getpost.comments.isNotEmpty
                         ? Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -151,7 +149,7 @@ class SinglePostScreen extends StatelessWidget {
                             ],
                           )
                         : Container(),
-                    commentlist.isNotEmpty
+                    getpost.comments.isNotEmpty
                         ? AnimatedContainer(
                             duration: const Duration(seconds: 1),
                             height: show
@@ -165,13 +163,13 @@ class SinglePostScreen extends StatelessWidget {
                                 padding: const EdgeInsets.all(8),
                                 shrinkWrap: true,
                                 primary: false,
-                                itemCount: commentlist.length,
+                                itemCount: getpost.comments.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   TextEditingController comedit =
                                       TextEditingController();
                                   commentcontroller.add(comedit);
                                   return CommentTile(
-                                      commentlist: commentlist,
+                                      commentlist: getpost.comments,
                                       commentcontroller: commentcontroller,
                                       getpost: getpost,
                                       index: index,

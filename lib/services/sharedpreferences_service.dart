@@ -27,4 +27,14 @@ class PreferencesService {
       storage.write(key: 'user_id', value: userid);
     }
   }
+
+  storeThemeType(bool value) async {
+    SharedPreferences prefs = await _prefs;
+    prefs.setBool('darkMode', value);
+  }
+
+  readThemeType() async {
+    SharedPreferences prefs = await _prefs;
+    return prefs.getBool('darkMode');
+  }
 }

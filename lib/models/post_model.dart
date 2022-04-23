@@ -7,7 +7,7 @@ class PostModel {
   String? link;
   String body;
   UserModel? user;
-  List<dynamic>? comments;
+  List<CommentModel> comments;
 
   PostModel(
       this.id, this.title, this.link, this.body, this.user, this.comments);
@@ -18,5 +18,8 @@ class PostModel {
         link = json['link'],
         body = json['body'],
         user = UserModel.fromJson(json['user']),
-        comments = json['comments'];
+        comments = json["comments"] == null
+            ? <CommentModel>[]
+            : List<CommentModel>.from(
+                json["comments"].map((x) => CommentModel.fromJson(x))).toList();
 }

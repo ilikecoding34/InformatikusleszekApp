@@ -1,4 +1,5 @@
 import 'package:blog/config/http_config.dart';
+import 'package:blog/models/comment_model.dart';
 import 'package:blog/models/post_model.dart';
 import 'package:blog/models/user_model.dart';
 import 'package:blog/services/sharedpreferences_service.dart';
@@ -33,7 +34,7 @@ class PostService extends ChangeNotifier {
       postlist = _adat.map((e) => PostModel.fromJson(e)).toList();
       notifyListeners();
     } catch (e) {
-      print(e);
+      //  print(e);
     }
   }
 
@@ -43,17 +44,10 @@ class PostService extends ChangeNotifier {
         '/post/$id',
       );
       var _adat = api.response!.data;
-      print(_adat);
-      singlepost = PostModel(
-          _adat['id'],
-          _adat['title'],
-          _adat['link'],
-          _adat['body'],
-          UserModel(_adat['user']['email'], _adat['user']['name']),
-          _adat['comments']);
+      singlepost = PostModel.fromJson(_adat);
       notifyListeners();
     } catch (e) {
-      print(e);
+      // print(e);
     }
   }
 
@@ -73,7 +67,7 @@ class PostService extends ChangeNotifier {
         notifyListeners();
         return _adat['id'];
       } catch (e) {
-        print(e);
+        //  print(e);
       }
     }
   }
@@ -91,7 +85,7 @@ class PostService extends ChangeNotifier {
         );
         notifyListeners();
       } catch (e) {
-        print(e);
+        //   print(e);
       }
     }
   }
