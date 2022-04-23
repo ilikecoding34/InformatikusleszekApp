@@ -15,15 +15,13 @@ void main() {
     ChangeNotifierProvider(create: (context) => AuthService()),
     ChangeNotifierProvider(create: (context) => PostService()),
     ChangeNotifierProvider(create: (context) => CommentService()),
-    ChangeNotifierProvider(
-        create: (context) => ThemeService(UIconfig.darkTheme)),
+    ChangeNotifierProvider(create: (context) => ThemeService()),
   ], child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     final themeNotifier = Provider.of<ThemeService>(context);
@@ -31,7 +29,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: themeNotifier.getTheme(),
-      home: const MyHomePage(title: 'Informatikus leszek blog'),
+      home: PostListScreen(title: 'Bejegyzés lista'),
     );
   }
 }
@@ -46,20 +44,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Future loadall() async {
-    await Provider.of<PostService>(context, listen: false).getallPost();
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => PostListScreen(title: 'Bejegyzés lista')),
-    );
-  }
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    loadall();
   }
 
   @override

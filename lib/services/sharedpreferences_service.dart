@@ -35,6 +35,7 @@ class PreferencesService {
 
   readThemeType() async {
     SharedPreferences prefs = await _prefs;
-    return prefs.getBool('darkMode');
+    bool mode = prefs.getBool('darkMode') ?? true;
+    return mode;
   }
 }

@@ -119,9 +119,11 @@ class SinglePostScreen extends StatelessWidget {
                                     child: const Text('Link megnyitása'))),
                             visible: getpost.link != null,
                           )
-                        : TextField(
-                            controller: postlinkcontroller,
-                          ),
+                        : Container(
+                            padding: const EdgeInsets.all(10),
+                            child: TextField(
+                              controller: postlinkcontroller,
+                            )),
                     Container(
                         padding: const EdgeInsets.all(10),
                         child: !isPostEdit
@@ -185,7 +187,7 @@ class SinglePostScreen extends StatelessWidget {
                   ],
                 ));
           } else {
-            return CircularProgressIndicator(value: null);
+            return const Center(child: CircularProgressIndicator(value: null));
           }
         }));
   }

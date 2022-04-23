@@ -1,8 +1,8 @@
-import 'package:blog/config/ui_config.dart';
 import 'package:blog/models/post_model.dart';
 import 'package:blog/screens/singlepost_page.dart';
 import 'package:blog/services/auth_service.dart';
 import 'package:blog/services/post_service.dart';
+import 'package:blog/services/sharedpreferences_service.dart';
 import 'package:blog/services/theme_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,10 +11,31 @@ import 'package:url_launcher/url_launcher.dart';
 import 'login_page.dart';
 import 'newpost_page.dart';
 
-class PostListScreen extends StatelessWidget {
+class PostListScreen extends StatefulWidget {
   PostListScreen({Key? key, required this.title}) : super(key: key);
+  String title;
+  @override
+  State<PostListScreen> createState() => _PostListScreenState();
+}
 
+class _PostListScreenState extends State<PostListScreen> {
   String? title;
+
+  PreferencesService shared = PreferencesService();
+
+  Future themeLoad() async {
+    //  SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool darkModeOn = await shared.readThemeType() ?? true;
+    Provider.of<ThemeService>(context, listen: false).changeMode(darkModeOn);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    themeLoad();
+    Provider.of<PostService>(context, listen: false).getallPost();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,13 +49,11 @@ class PostListScreen extends StatelessWidget {
           Switch(
             value: themeNotifier.getMode(),
             onChanged: (value) {
-              value
-                  ? themeNotifier.setTheme(UIconfig.darkTheme)
-                  : themeNotifier.setTheme(UIconfig.lightTheme);
-              themeNotifier.setMode(value);
+              themeNotifier.changeMode(value);
             },
-            activeTrackColor: Colors.lightGreenAccent,
-            activeColor: Colors.green,
+            inactiveTrackColor: Colors.white,
+            activeTrackColor: Colors.grey,
+            activeColor: Colors.black45,
           ),
           isloggedin
               ? IconButton(
@@ -105,10 +124,11 @@ class PostListScreen extends StatelessWidget {
                             shadowColor:
                                 MaterialStateProperty.all(Colors.transparent),
                           ),
-                          onPressed: () {
+                          onPressed: () async {
                             Provider.of<PostService>(context, listen: false)
                                 .collapse = true;
-                            Provider.of<PostService>(context, listen: false)
+                            await Provider.of<PostService>(context,
+                                    listen: false)
                                 .getPost(id: postitem.id);
                             Navigator.push(
                               context,

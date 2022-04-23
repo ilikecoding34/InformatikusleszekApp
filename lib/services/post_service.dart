@@ -1,7 +1,5 @@
 import 'package:blog/config/http_config.dart';
-import 'package:blog/models/comment_model.dart';
 import 'package:blog/models/post_model.dart';
-import 'package:blog/models/user_model.dart';
 import 'package:blog/services/sharedpreferences_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -38,7 +36,7 @@ class PostService extends ChangeNotifier {
     }
   }
 
-  void getPost({int? id}) async {
+  Future getPost({int? id}) async {
     try {
       api.response = await api.dio.get(
         '/post/$id',
