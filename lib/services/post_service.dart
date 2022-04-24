@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 class PostService extends ChangeNotifier {
   bool collapse = false;
   bool postedit = false;
+  bool isLoading = false;
   List<dynamic> postlist = [];
   PostModel? singlepost;
   final HttpConfig api = HttpConfig();
@@ -43,6 +44,7 @@ class PostService extends ChangeNotifier {
       );
       var _adat = api.response!.data;
       singlepost = PostModel.fromJson(_adat);
+      isLoading = false;
       notifyListeners();
     } catch (e) {
       // print(e);

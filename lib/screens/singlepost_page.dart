@@ -1,10 +1,8 @@
-import 'package:blog/config/ui_config.dart';
-import 'package:blog/models/comment_model.dart';
 import 'package:blog/models/post_model.dart';
 import 'package:blog/services/auth_service.dart';
 import 'package:blog/services/comment_service.dart';
 import 'package:blog/services/post_service.dart';
-import 'package:blog/widgets/comment_tile.dart';
+import 'package:blog/widgets/comment_tile_widget.dart';
 import 'package:blog/widgets/new_comment_widget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -89,7 +87,7 @@ class SinglePostScreen extends StatelessWidget {
           ],
         ),
         body: Consumer<PostService>(builder: (context, post, child) {
-          if (post.singlepost != null) {
+          if (!post.isLoading) {
             bool show = Provider.of<PostService>(context).collapse;
 
             posttitlecontroller.text = getpost!.title;
