@@ -12,9 +12,15 @@ class AuthService extends ChangeNotifier {
   bool _isloggedin = false;
   bool authfailed = false;
   bool done = false;
+  bool bregistration = false;
 
   bool get authenticated => _isloggedin;
   UserModel? get user => _user;
+
+  void regorlogin() {
+    bregistration = !bregistration;
+    notifyListeners();
+  }
 
   Future login({Map? creds}) async {
     _isloggedin = false;
@@ -31,6 +37,19 @@ class AuthService extends ChangeNotifier {
       if (token != null) {
         _isloggedin = true;
       }
+      notifyListeners();
+    } catch (e) {
+      //  print(e);
+      notifyListeners();
+    }
+  }
+
+  Future registration({Map? creds}) async {
+    _isloggedin = false;
+    try {
+      api.response =
+          await api.dio.post('/registration', data: creds).then((value) {});
+
       notifyListeners();
     } catch (e) {
       //  print(e);

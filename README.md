@@ -1,8 +1,10 @@
-# blog
+# Informatikusleszek.hu Application
 
 A new Flutter project.
 
 ## Getting Started
+
+https://informatikusleszek.hu/
 
 This project is a starting point for a Flutter application.
 

@@ -31,6 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool reg = Provider.of<AuthService>(context, listen: true).bregistration;
     bool loggedin =
         Provider.of<AuthService>(context, listen: true).authenticated;
     return Scaffold(
@@ -93,29 +94,59 @@ class _LoginScreenState extends State<LoginScreen> {
                       )),
                   visible: !loggedin,
                 ),
+                reg
+                    ? ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            primary: Colors.cyan,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 50, vertical: 20),
+                            textStyle: const TextStyle(
+                                fontSize: 30, fontWeight: FontWeight.bold)),
+                        onPressed: () async {
+                          Map creds = {
+                            'email': _email.text,
+                            'password': _password.text,
+                          };
+                          await Provider.of<AuthService>(context, listen: false)
+                              .login(creds: creds)
+                              .then((value) => {Navigator.pop(context)});
+                        },
+                        child: loggedin
+                            ? const Text('Belépve')
+                            : const Text('Belépés',
+                                style: TextStyle(fontSize: UIconfig.mySize)))
+                    : ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            primary: Colors.cyan,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 50, vertical: 20),
+                            textStyle: const TextStyle(
+                                fontSize: 30, fontWeight: FontWeight.bold)),
+                        onPressed: () async {
+                          Map creds = {
+                            'email': _email.text,
+                            'password': _password.text,
+                          };
+                          await Provider.of<AuthService>(context, listen: false)
+                              .registration(creds: creds)
+                              .then((value) => {Navigator.pop(context)});
+                        },
+                        child: loggedin
+                            ? const Text('Belépve')
+                            : const Text('Belépés',
+                                style: TextStyle(fontSize: UIconfig.mySize))),
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        primary: Colors.cyan,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 50, vertical: 20),
-                        textStyle: const TextStyle(
-                            fontSize: 30, fontWeight: FontWeight.bold)),
-                    onPressed: () async {
-                      Map creds = {
-                        'email': _email.text,
-                        'password': _password.text,
-                      };
-                      await Provider.of<AuthService>(context, listen: false)
-                          .login(creds: creds)
-                          .then((value) => {Navigator.pop(context)});
-                    },
-                    child: loggedin
-                        ? const Text('Belépve')
-                        : const Text('Belépés',
-                            style: TextStyle(fontSize: UIconfig.mySize)))
+                    onPressed: () =>
+                        Provider.of<AuthService>(context, listen: false)
+                            .bregistration,
+                    child:
+                        reg ? const Text('Registration') : const Text('login')),
               ],
             )
           ],
