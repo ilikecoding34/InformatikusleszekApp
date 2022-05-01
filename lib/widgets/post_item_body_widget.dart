@@ -16,12 +16,8 @@ class PostListItemBody extends StatelessWidget {
       children: [
         Flexible(
           child: Text(postitem.title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 20.0,
-                foreground: Paint()
-                  ..style = PaintingStyle.stroke
-                  ..strokeWidth = 1
-                  ..color = Colors.black,
               )),
         ),
         Text(postitem.user!.name),

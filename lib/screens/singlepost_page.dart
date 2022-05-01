@@ -125,7 +125,7 @@ class SinglePostScreen extends StatelessWidget {
                     Container(
                         padding: const EdgeInsets.all(10),
                         child: !isPostEdit
-                            ? Text(getpost.body,
+                            ? SelectableText(getpost.body,
                                 style: const TextStyle(fontSize: 20.0))
                             : TextField(
                                 controller: postbodycontroller,

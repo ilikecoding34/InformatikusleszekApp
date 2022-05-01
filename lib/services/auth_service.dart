@@ -10,6 +10,7 @@ class AuthService extends ChangeNotifier {
   UserModel? _user;
 
   bool _isloggedin = false;
+  bool verificationsent = false;
   bool authfailed = false;
   bool done = false;
   bool bregistration = false;
@@ -17,8 +18,13 @@ class AuthService extends ChangeNotifier {
   bool get authenticated => _isloggedin;
   UserModel? get user => _user;
 
-  void regorlogin() {
-    bregistration = !bregistration;
+  void changeToLogin() {
+    bregistration = false;
+    notifyListeners();
+  }
+
+  void changeToReg() {
+    bregistration = true;
     notifyListeners();
   }
 
@@ -49,7 +55,7 @@ class AuthService extends ChangeNotifier {
     try {
       api.response =
           await api.dio.post('/registration', data: creds).then((value) {});
-
+      verificationsent = true;
       notifyListeners();
     } catch (e) {
       //  print(e);
