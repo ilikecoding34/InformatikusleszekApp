@@ -6,7 +6,7 @@ class PreferencesService {
   final storage = FlutterSecureStorage();
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
-  Future<String?> readToken() async {
+  Future readToken() async {
     String? token;
     SharedPreferences prefs = await _prefs;
     if (kIsWeb) {
@@ -17,7 +17,18 @@ class PreferencesService {
     return token;
   }
 
-  storeToken({String? token, String? userid}) async {
+  Future readUserId() async {
+    String? userid;
+    SharedPreferences prefs = await _prefs;
+    if (kIsWeb) {
+      userid = prefs.getString('user_id');
+    } else {
+      userid = await storage.read(key: "user_id");
+    }
+    return userid;
+  }
+
+  Future storeToken({String? token, String? userid}) async {
     SharedPreferences prefs = await _prefs;
     if (kIsWeb) {
       prefs.setString('token', token!);

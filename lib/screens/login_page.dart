@@ -1,4 +1,5 @@
 import 'package:blog/config/ui_config.dart';
+import 'package:blog/screens/verification_page.dart';
 import 'package:blog/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -58,14 +59,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.all(10),
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            primary: Colors.cyan,
+                            primary: reg ? Colors.cyan : Colors.lightGreen,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30.0),
                             ),
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 50, vertical: 20),
                             textStyle: const TextStyle(
-                                fontSize: 30, fontWeight: FontWeight.bold)),
+                                fontSize: UIconfig.mySize,
+                                fontWeight: FontWeight.bold)),
                         onPressed: () => {
                               Provider.of<AuthService>(context, listen: false)
                                   .changeToLogin(),
@@ -76,14 +78,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.all(10),
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            primary: Colors.cyan,
+                            primary: reg ? Colors.lightGreen : Colors.cyan,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30.0),
                             ),
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 50, vertical: 20),
                             textStyle: const TextStyle(
-                                fontSize: 30, fontWeight: FontWeight.bold)),
+                                fontSize: UIconfig.mySize,
+                                fontWeight: FontWeight.bold)),
                         onPressed: () =>
                             Provider.of<AuthService>(context, listen: false)
                                 .changeToReg(),
@@ -100,7 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     onEnd: () => setState(() {
                           reg ? namevisible = true : namevisible = false;
                         }),
-                    height: reg ? 250 : 200,
+                    height: reg ? 270 : 220,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -194,9 +197,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                   };
                                   await Provider.of<AuthService>(context,
                                           listen: false)
-                                      .registration(creds: creds)
-                                      .then(
-                                          (value) => {Navigator.pop(context)});
+                                      .registration(creds: creds);
+
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            VerificationScreen()),
+                                  );
                                 },
                                 child: loggedin
                                     ? const Text('Belépve')

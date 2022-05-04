@@ -33,7 +33,7 @@ class PostService extends ChangeNotifier {
       postlist = _adat.map((e) => PostModel.fromJson(e)).toList();
       notifyListeners();
     } catch (e) {
-      //  print(e);
+      print(e);
     }
   }
 

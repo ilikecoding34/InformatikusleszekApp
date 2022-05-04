@@ -52,6 +52,8 @@ class _PostListScreenState extends State<PostListScreen> {
     final themeNotifier = Provider.of<ThemeService>(context);
     bool isloggedin =
         Provider.of<AuthService>(context, listen: true).authenticated;
+    bool verified =
+        Provider.of<AuthService>(context, listen: true).verificationdone;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Bejegyzések'),
@@ -65,6 +67,7 @@ class _PostListScreenState extends State<PostListScreen> {
             activeTrackColor: Colors.grey,
             activeColor: Colors.black45,
           ),
+          verified ? const Text('verified') : const Text(''),
           isloggedin
               ? IconButton(
                   onPressed: () {
