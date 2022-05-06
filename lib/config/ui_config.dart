@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class UIconfig {
   static const double mySize = 20.0;
+  static const double boxWidth = 50.0;
   static const Color myColor = Colors.blue;
   static const Icon myIcon = Icon(
     Icons.search,

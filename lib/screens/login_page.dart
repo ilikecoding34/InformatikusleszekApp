@@ -64,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               borderRadius: BorderRadius.circular(30.0),
                             ),
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 50, vertical: 20),
+                                horizontal: 5, vertical: 10),
                             textStyle: const TextStyle(
                                 fontSize: UIconfig.mySize,
                                 fontWeight: FontWeight.bold)),
@@ -73,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   .changeToLogin(),
                               namevisible = false,
                             },
-                        child: const Text('Login'))),
+                        child: const Text('Bejelentkezés'))),
                 Padding(
                     padding: const EdgeInsets.all(10),
                     child: ElevatedButton(
@@ -83,14 +83,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               borderRadius: BorderRadius.circular(30.0),
                             ),
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 50, vertical: 20),
+                                horizontal: 5, vertical: 10),
                             textStyle: const TextStyle(
                                 fontSize: UIconfig.mySize,
                                 fontWeight: FontWeight.bold)),
                         onPressed: () =>
                             Provider.of<AuthService>(context, listen: false)
                                 .changeToReg(),
-                        child: const Text('Registration'))),
+                        child: const Text('Regisztráció'))),
               ],
             ),
             Padding(
@@ -103,7 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     onEnd: () => setState(() {
                           reg ? namevisible = true : namevisible = false;
                         }),
-                    height: reg ? 270 : 220,
+                    height: reg ? 300 : 220,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -195,10 +195,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                     'name': _name.text,
                                     'password': _password.text,
                                   };
+
                                   await Provider.of<AuthService>(context,
                                           listen: false)
                                       .registration(creds: creds);
-
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
