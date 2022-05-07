@@ -99,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.only(left: 10, right: 10),
                     decoration: BoxDecoration(
                         border: Border.all(color: Colors.blueAccent)),
-                    duration: const Duration(seconds: 1),
+                    duration: const Duration(milliseconds: 500),
                     onEnd: () => setState(() {
                           reg ? namevisible = true : namevisible = false;
                         }),

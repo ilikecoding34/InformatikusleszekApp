@@ -18,6 +18,7 @@ class AuthService extends ChangeNotifier {
   bool done = false;
   bool bregistration = false;
 
+  bool get getVerification => verificationdone;
   bool get authenticated => _isloggedin;
   UserModel? get user => _user;
 
@@ -48,7 +49,6 @@ class AuthService extends ChangeNotifier {
       }
       notifyListeners();
     } catch (e) {
-      //   print(e);
       notifyListeners();
     }
   }
@@ -62,10 +62,8 @@ class AuthService extends ChangeNotifier {
         userid = value.data['user_id'].toString();
         token = value.data['access_token'].toString();
       });
-      SharedPreferences prefs = await _prefs;
 
-      prefs.setString('token', token!);
-      prefs.setString('user_id', userid!);
+      shared.storeToken(token: token, userid: userid);
 
       verificationsent = true;
       bregistration = false;
@@ -77,12 +75,11 @@ class AuthService extends ChangeNotifier {
 
   Future verification(String code) async {
     _isloggedin = false;
-    SharedPreferences prefs = await _prefs;
-    String? userid = prefs.getString('user_id');
+    String? userid = await shared.readUserId();
     try {
       String url = '/verify/$userid/$code';
       api.response = await api.dio.get(url);
-      if (api.response!.data != null) {
+      if (api.response!.data != 'failed') {
         verificationdone = true;
       }
       notifyListeners();

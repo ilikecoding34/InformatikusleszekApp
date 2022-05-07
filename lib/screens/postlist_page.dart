@@ -52,22 +52,22 @@ class _PostListScreenState extends State<PostListScreen> {
     final themeNotifier = Provider.of<ThemeService>(context);
     bool isloggedin =
         Provider.of<AuthService>(context, listen: true).authenticated;
-    bool verified =
-        Provider.of<AuthService>(context, listen: true).verificationdone;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Bejegyzések'),
         actions: [
-          Switch(
-            value: themeNotifier.getMode(),
-            onChanged: (value) {
-              themeNotifier.changeMode(value);
-            },
-            inactiveTrackColor: Colors.white,
-            activeTrackColor: Colors.grey,
-            activeColor: Colors.black45,
+          Container(
+            alignment: Alignment.center,
+            child: const Text('Mode:'),
           ),
-          verified ? const Text('verified') : const Text(''),
+          IconButton(
+              onPressed: () {
+                bool value = !themeNotifier.getMode();
+                themeNotifier.changeMode(value);
+              },
+              icon: themeNotifier.getMode()
+                  ? const Icon(Icons.dark_mode)
+                  : const Icon(Icons.light_mode)),
           isloggedin
               ? IconButton(
                   onPressed: () {

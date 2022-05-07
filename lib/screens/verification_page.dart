@@ -3,8 +3,8 @@ import 'package:blog/screens/postlist_page.dart';
 import 'package:blog/services/auth_service.dart';
 import 'package:blog/widgets/number_box.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'dart:async';
 
 class VerificationScreen extends StatelessWidget {
   VerificationScreen({Key? key}) : super(key: key);
@@ -22,6 +22,15 @@ class VerificationScreen extends StatelessWidget {
   String code = '';
   @override
   Widget build(BuildContext context) {
+    if (Provider.of<AuthService>(context).getVerification) {
+      Future.delayed(const Duration(milliseconds: 2000), () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => PostListScreen(title: 'Bejegyzés lista')),
+        );
+      });
+    }
     return Scaffold(
         appBar: AppBar(
           title: const Text('Bejelentkezés'),
@@ -30,7 +39,16 @@ class VerificationScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Text('Visszaigazoló email elküldve'),
+            Provider.of<AuthService>(context).getVerification
+                ? Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Container(
+                        color: Colors.cyan, child: const Text('Jóváhagyva')))
+                : const Text(''),
+            const Padding(
+              padding: EdgeInsets.all(10),
+              child: Text('Visszaigazoló email elküldve'),
+            ),
             Padding(
               padding: const EdgeInsets.all(10),
               child: Container(
@@ -85,7 +103,10 @@ class VerificationScreen extends StatelessWidget {
                           FocusScope.of(context)
                               .requestFocus(textFirstFocusNode);
                         },
-                        icon: const Icon(Icons.delete_forever)),
+                        icon: const Icon(
+                          Icons.delete_forever,
+                          color: Colors.black,
+                        )),
                   ],
                 ),
               ),
@@ -106,12 +127,6 @@ class VerificationScreen extends StatelessWidget {
                       '${first.text}${second.text}${third.text}${fourth.text}';
                   await Provider.of<AuthService>(context, listen: false)
                       .verification(code);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            PostListScreen(title: 'Bejegyzés lista')),
-                  );
                 },
                 child: const Text('Küldés')),
           ],
