@@ -25,12 +25,20 @@ class NumberBox extends StatefulWidget {
 
 class _NumberBoxState extends State<NumberBox> {
   @override
+  void initState() {
+    // TODO: implement initState
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
-          color: widget.controller.text.isNotEmpty
+          color: widget.controller.text != '\u200b' &&
+                  widget.controller.text.isNotEmpty
               ? Colors.green
               : Colors.green.shade100,
         ),
@@ -52,6 +60,7 @@ class _NumberBoxState extends State<NumberBox> {
               }
               if (value.isEmpty && widget.prevfocusnode != null) {
                 FocusScope.of(context).requestFocus(widget.prevfocusnode);
+                widget.controller.text = '\u200b';
               }
             });
           },

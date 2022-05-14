@@ -87,4 +87,17 @@ class AuthService extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future lateVerification(String code, String email) async {
+    try {
+      Map datas = {'code': code, 'email': email};
+      api.response = await api.dio.post('/lateverify', data: datas);
+      if (api.response!.data != 'failed') {
+        verificationdone = true;
+      }
+      notifyListeners();
+    } catch (e) {
+      notifyListeners();
+    }
+  }
 }

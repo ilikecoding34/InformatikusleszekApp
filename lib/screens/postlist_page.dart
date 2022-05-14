@@ -54,6 +54,7 @@ class _PostListScreenState extends State<PostListScreen> {
         Provider.of<AuthService>(context, listen: true).authenticated;
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Bejegyzések'),
         actions: [
           Container(
@@ -110,24 +111,6 @@ class _PostListScreenState extends State<PostListScreen> {
             return const Center(child: CircularProgressIndicator(value: null));
           }
         },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          if (!await launch(
-            'https://www.buymeacoffee.com/buymesomebeer',
-            forceSafariVC: true,
-            forceWebView: true,
-            enableJavaScript: true,
-          )) throw 'Could not launch';
-        },
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        shape: const StadiumBorder(
-            side: BorderSide(color: Colors.black, width: 2)),
-        child: const Text(
-          '🍺',
-          style: TextStyle(fontSize: 40.0),
-        ),
       ),
     );
   }

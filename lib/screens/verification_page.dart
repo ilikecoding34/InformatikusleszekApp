@@ -7,23 +7,34 @@ import 'package:provider/provider.dart';
 import 'dart:async';
 
 class VerificationScreen extends StatelessWidget {
-  VerificationScreen({Key? key}) : super(key: key);
+  VerificationScreen({Key? key, required this.lateverification})
+      : super(key: key);
 
-  TextEditingController first = TextEditingController();
-  TextEditingController second = TextEditingController();
-  TextEditingController third = TextEditingController();
-  TextEditingController fourth = TextEditingController();
+  final bool lateverification;
 
-  FocusNode textFirstFocusNode = FocusNode();
-  FocusNode textSecondFocusNode = FocusNode();
-  FocusNode textThirdFocusNode = FocusNode();
-  FocusNode textFourthFocusNode = FocusNode();
+  final TextEditingController _email = TextEditingController();
+
+  List<TextEditingController> controllerArray = [
+    TextEditingController(text: '\u200b'),
+    TextEditingController(text: '\u200b'),
+    TextEditingController(text: '\u200b'),
+    TextEditingController(text: '\u200b'),
+  ];
+
+  List<FocusNode> focusnodeArray = [
+    FocusNode(),
+    FocusNode(),
+    FocusNode(),
+    FocusNode()
+  ];
 
   String code = '';
   @override
   Widget build(BuildContext context) {
     if (Provider.of<AuthService>(context).getVerification) {
       Future.delayed(const Duration(milliseconds: 2000), () {
+        Provider.of<AuthService>(context, listen: false).verificationdone =
+            false;
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -35,9 +46,9 @@ class VerificationScreen extends StatelessWidget {
         appBar: AppBar(
           title: const Text('Bejelentkezés'),
         ),
-        body: Column(
+        body: SingleChildScrollView(
+            child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Provider.of<AuthService>(context).getVerification
                 ? Padding(
@@ -49,6 +60,27 @@ class VerificationScreen extends StatelessWidget {
               padding: EdgeInsets.all(10),
               child: Text('Visszaigazoló email elküldve'),
             ),
+            Visibility(
+              child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                  child: TextField(
+                    controller: _email,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                        labelText: 'Email',
+                        enabledBorder: OutlineInputBorder(
+                          borderSide:
+                              const BorderSide(width: 3, color: Colors.blue),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide:
+                              const BorderSide(width: 3, color: Colors.lime),
+                          borderRadius: BorderRadius.circular(15),
+                        )),
+                  )),
+              visible: lateverification,
+            ),
             Padding(
               padding: const EdgeInsets.all(10),
               child: Container(
@@ -59,49 +91,24 @@ class VerificationScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: NumberBox(
-                          focus: true,
-                          controller: first,
-                          currentfocusnode: textFirstFocusNode,
-                          nextfocusnode: textSecondFocusNode,
-                          size: UIconfig.boxWidth,
-                        )),
-                    Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: NumberBox(
-                          controller: second,
-                          prevfocusnode: textFirstFocusNode,
-                          currentfocusnode: textSecondFocusNode,
-                          nextfocusnode: textThirdFocusNode,
-                          size: UIconfig.boxWidth,
-                        )),
-                    Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: NumberBox(
-                          controller: third,
-                          prevfocusnode: textSecondFocusNode,
-                          currentfocusnode: textThirdFocusNode,
-                          nextfocusnode: textFourthFocusNode,
-                          size: UIconfig.boxWidth,
-                        )),
-                    Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: NumberBox(
-                          controller: fourth,
-                          prevfocusnode: textThirdFocusNode,
-                          currentfocusnode: textFourthFocusNode,
-                          size: UIconfig.boxWidth,
-                        )),
+                    for (int i = 0; i < 4; i++)
+                      Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: NumberBox(
+                            focus: i == 0 ? true : null,
+                            controller: controllerArray[i],
+                            prevfocusnode: i > 0 ? focusnodeArray[i - 1] : null,
+                            currentfocusnode: focusnodeArray[i],
+                            nextfocusnode: i < 3 ? focusnodeArray[i + 1] : null,
+                            size: UIconfig.boxWidth,
+                          )),
                     IconButton(
                         onPressed: () {
-                          first.clear();
-                          second.clear();
-                          third.clear();
-                          fourth.clear();
+                          for (var item in controllerArray) {
+                            item.text = '\u200b';
+                          }
                           FocusScope.of(context)
-                              .requestFocus(textFirstFocusNode);
+                              .requestFocus(focusnodeArray[0]);
                         },
                         icon: const Icon(
                           Icons.delete_forever,
@@ -123,13 +130,18 @@ class VerificationScreen extends StatelessWidget {
                         fontSize: UIconfig.mySize,
                         fontWeight: FontWeight.bold)),
                 onPressed: () async {
-                  code =
-                      '${first.text}${second.text}${third.text}${fourth.text}';
-                  await Provider.of<AuthService>(context, listen: false)
-                      .verification(code);
+                  code = '';
+                  for (var item in controllerArray) {
+                    code += item.text;
+                  }
+                  lateverification
+                      ? await Provider.of<AuthService>(context, listen: false)
+                          .lateVerification(code, _email.text)
+                      : await Provider.of<AuthService>(context, listen: false)
+                          .verification(code);
                 },
                 child: const Text('Küldés')),
           ],
-        ));
+        )));
   }
 }

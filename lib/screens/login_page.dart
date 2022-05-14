@@ -61,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: ElevatedButton.styleFrom(
                             primary: reg ? Colors.cyan : Colors.lightGreen,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0),
+                              borderRadius: BorderRadius.circular(10.0),
                             ),
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 5, vertical: 10),
@@ -80,7 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: ElevatedButton.styleFrom(
                             primary: reg ? Colors.lightGreen : Colors.cyan,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0),
+                              borderRadius: BorderRadius.circular(10.0),
                             ),
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 5, vertical: 10),
@@ -92,6 +92,22 @@ class _LoginScreenState extends State<LoginScreen> {
                                 .changeToReg(),
                         child: const Text('Regisztráció'))),
               ],
+            ),
+            Visibility(
+              child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                  child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => VerificationScreen(
+                                    lateverification: true,
+                                  )),
+                        );
+                      },
+                      child: const Text('Email cím megerősítés'))),
+              visible: !loggedin && namevisible,
             ),
             Padding(
                 padding: const EdgeInsets.all(20),
@@ -203,7 +219,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            VerificationScreen()),
+                                            VerificationScreen(
+                                              lateverification: false,
+                                            )),
                                   );
                                 },
                                 child: loggedin
