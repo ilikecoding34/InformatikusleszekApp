@@ -25,13 +25,6 @@ class NumberBox extends StatefulWidget {
 
 class _NumberBoxState extends State<NumberBox> {
   @override
-  void initState() {
-    // TODO: implement initState
-    SystemChannels.textInput.invokeMethod('TextInput.hide');
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Container(
         decoration: BoxDecoration(
