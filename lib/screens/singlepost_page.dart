@@ -21,6 +21,10 @@ class SinglePostScreen extends StatelessWidget {
   TextEditingController newcommentcontroller = TextEditingController();
   List<TextEditingController> commentcontroller = [];
 
+  List<dynamic> taglist = [];
+
+  List<int> selected = [];
+
   String? datas;
 
   Map postdatas = {};
@@ -40,13 +44,16 @@ class SinglePostScreen extends StatelessWidget {
     bool isEditing = Provider.of<CommentService>(context).commentedit;
     bool isPostEdit = Provider.of<PostService>(context).postedit;
     PostModel? getpost = Provider.of<PostService>(context).singlepost;
+    taglist = Provider.of<PostService>(context, listen: true).taglist;
+    selected = Provider.of<PostService>(context, listen: true).tagselected;
     return Scaffold(
         appBar: AppBar(
           title: Text(title),
           leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                Provider.of<PostService>(context, listen: false).getallPost();
+                Provider.of<PostService>(context, listen: false)
+                    .getallPostnewversion();
                 Navigator.pop(context);
               }),
           actions: [
@@ -60,8 +67,10 @@ class SinglePostScreen extends StatelessWidget {
                             'title': posttitlecontroller.text,
                             'link': postlinkcontroller.text,
                             'content': postbodycontroller.text,
+                            'tags': selected,
                             'category': 1
                           };
+
                           await Provider.of<PostService>(context, listen: false)
                               .modifyPost(datas: postdatas)
                               .then((value) => Provider.of<PostService>(context,
@@ -130,6 +139,34 @@ class SinglePostScreen extends StatelessWidget {
                             : TextField(
                                 controller: postbodycontroller,
                               )),
+                    isPostEdit
+                        ? Wrap(
+                            children: [
+                              for (var item in taglist)
+                                AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
+                                    height:
+                                        selected.contains(item.id) ? 30 : 40,
+                                    child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 10),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            Provider.of<PostService>(context,
+                                                    listen: false)
+                                                .tagsSelection(item.id);
+                                          },
+                                          child: Chip(
+                                            backgroundColor:
+                                                selected.contains(item.id)
+                                                    ? Colors.blue
+                                                    : Colors.grey,
+                                            label: Text(item.name),
+                                          ),
+                                        )))
+                            ],
+                          )
+                        : Container(),
                     getpost.comments.isNotEmpty
                         ? Row(
                             mainAxisAlignment: MainAxisAlignment.center,

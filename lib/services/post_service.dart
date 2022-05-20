@@ -10,6 +10,7 @@ class PostService extends ChangeNotifier {
   bool collapse = false;
   bool postedit = false;
   bool isLoading = false;
+  List<int> tagselected = [];
   List<dynamic> postlist = [];
   List<dynamic> taglist = [];
   List<dynamic> filteredposts = [];
@@ -24,7 +25,7 @@ class PostService extends ChangeNotifier {
   }
 
   void setToModify() {
-    postedit = !postedit;
+    postedit = true;
     notifyListeners();
   }
 
@@ -56,6 +57,11 @@ class PostService extends ChangeNotifier {
     }
   }
 
+  tagsSelection(int id) {
+    tagselected.contains(id) ? tagselected.remove(id) : tagselected.add(id);
+    notifyListeners();
+  }
+
   filterPosts(String name) {
     List<dynamic> filteringposts = [];
     if (name == 'all') {
@@ -78,6 +84,7 @@ class PostService extends ChangeNotifier {
   }
 
   Future getPost({int? id}) async {
+    postedit = false;
     try {
       api.response = await api.dio.get(
         '/post/$id',

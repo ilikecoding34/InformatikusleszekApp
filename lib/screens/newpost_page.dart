@@ -13,8 +13,15 @@ class NewPostPage extends StatelessWidget {
   TextEditingController link = TextEditingController();
   TextEditingController body = TextEditingController();
 
+  List<dynamic> taglist = [];
+
+  List<int> selected = [];
+
   @override
   Widget build(BuildContext context) {
+    Provider.of<PostService>(context, listen: false).getallPostnewversion();
+    taglist = Provider.of<PostService>(context, listen: true).taglist;
+    selected = Provider.of<PostService>(context, listen: true).tagselected;
     return Scaffold(
         appBar: AppBar(
           title: const Text('Bejelentkezés'),
@@ -74,6 +81,29 @@ class NewPostPage extends StatelessWidget {
                             borderRadius: BorderRadius.circular(15),
                           )),
                     )),
+                Wrap(
+                  children: [
+                    for (var item in taglist)
+                      AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          height: selected.contains(item.id) ? 30 : 40,
+                          child: Padding(
+                              padding: const EdgeInsets.only(right: 10),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Provider.of<PostService>(context,
+                                          listen: false)
+                                      .tagsSelection(item.id);
+                                },
+                                child: Chip(
+                                  backgroundColor: selected.contains(item.id)
+                                      ? Colors.blue
+                                      : Colors.grey,
+                                  label: Text(item.name),
+                                ),
+                              )))
+                  ],
+                ),
                 Container(
                     padding: const EdgeInsets.all(10),
                     width: 300.0,
@@ -96,13 +126,14 @@ class NewPostPage extends StatelessWidget {
                           'title': title.text,
                           'link': link.text,
                           'content': body.text,
+                          'tags': selected,
                           'category': 1
                         };
                         await Provider.of<PostService>(context, listen: false)
                             .storePost(datas: datas)
                             .then((value) => {Navigator.pop(context)});
                         Provider.of<PostService>(context, listen: false)
-                            .getallPost();
+                            .getallPostnewversion();
                       },
                     ))
               ],
