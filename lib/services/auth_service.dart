@@ -32,6 +32,11 @@ class AuthService extends ChangeNotifier {
     notifyListeners();
   }
 
+  void loginUser() {
+    _isloggedin = true;
+    notifyListeners();
+  }
+
   Future login({Map? creds}) async {
     _isloggedin = false;
     try {

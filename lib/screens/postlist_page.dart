@@ -7,7 +7,6 @@ import 'package:blog/services/theme_service.dart';
 import 'package:blog/widgets/post_list_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'login_page.dart';
 import 'newpost_page.dart';
@@ -21,6 +20,8 @@ class PostListScreen extends StatefulWidget {
 
 class _PostListScreenState extends State<PostListScreen> {
   String? title;
+  List<dynamic> loadedposts = [];
+  List<PostModel> filteredposts = [];
 
   PreferencesService shared = PreferencesService();
 
@@ -39,12 +40,29 @@ class _PostListScreenState extends State<PostListScreen> {
     Provider.of<ThemeService>(context, listen: false).changeMode(darkModeOn);
   }
 
+  loadposts() async {
+    await Provider.of<PostService>(context, listen: false)
+        .getallPostnewversion();
+
+    setState(() {
+      loadedposts = Provider.of<PostService>(context, listen: true).postlist;
+    });
+  }
+
+/*
+  Future userLoad() async {
+    bool userLoggedIn = await shared.readUserId();
+    userLoggedIn
+        ? Provider.of<AuthService>(context, listen: false).loginUser()
+        : null;
+  }
+*/
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     themeLoad();
-    Provider.of<PostService>(context, listen: false).getallPost();
+    loadposts();
   }
 
   @override
@@ -52,6 +70,7 @@ class _PostListScreenState extends State<PostListScreen> {
     final themeNotifier = Provider.of<ThemeService>(context);
     bool isloggedin =
         Provider.of<AuthService>(context, listen: true).authenticated;
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -94,19 +113,61 @@ class _PostListScreenState extends State<PostListScreen> {
       body: Consumer<PostService>(
         builder: (context, post, child) {
           if (post.postlist.isNotEmpty) {
-            return ListView.separated(
-                separatorBuilder: (context, index) => const Divider(
-                      color: Colors.black,
-                    ),
-                padding: const EdgeInsets.all(8),
-                itemCount: post.postlist.length,
-                itemBuilder: (BuildContext context, int index) {
-                  PostModel postitem = post.postlist[index];
-                  return PostListItem(
-                    postitem: postitem,
-                    openitem: () => openPost(postitem.title, postitem.id),
-                  );
-                });
+            return Column(
+              children: [
+                Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Wrap(
+                      children: [
+                        Chip(
+                            label: ElevatedButton(
+                                child: const Text("Mind"),
+                                onPressed: () {
+                                  setState(() {
+                                    loadedposts = post.postlist;
+                                  });
+                                })),
+                        for (var item in post.taglist)
+                          Chip(
+                              label: ElevatedButton(
+                            child: Text(item.name),
+                            onPressed: () {
+                              filteredposts.clear();
+                              for (int i = 0; i < post.postlist.length; i++) {
+                                if (post.postlist[i].tags != null) {
+                                  if (post.postlist[i].tags.length > 0) {
+                                    for (var tag in post.postlist[i].tags) {
+                                      if (tag.name == item.name) {
+                                        filteredposts.add(post.postlist[i]);
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                              setState(() {
+                                loadedposts = filteredposts;
+                              });
+                            },
+                          )),
+                      ],
+                    )),
+                Expanded(
+                    child: ListView.separated(
+                        separatorBuilder: (context, index) => const Divider(
+                              color: Colors.black,
+                            ),
+                        padding: const EdgeInsets.all(8),
+                        itemCount: loadedposts.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          PostModel postitem = loadedposts[index];
+                          return PostListItem(
+                            postitem: postitem,
+                            openitem: () =>
+                                openPost(postitem.title, postitem.id),
+                          );
+                        }))
+              ],
+            );
           } else {
             return const Center(child: CircularProgressIndicator(value: null));
           }

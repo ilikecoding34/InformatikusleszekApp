@@ -1,5 +1,6 @@
 import 'package:blog/config/http_config.dart';
 import 'package:blog/models/post_model.dart';
+import 'package:blog/models/tag_model.dart';
 import 'package:blog/services/sharedpreferences_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -10,7 +11,9 @@ class PostService extends ChangeNotifier {
   bool postedit = false;
   bool isLoading = false;
   List<dynamic> postlist = [];
+  List<dynamic> taglist = [];
   PostModel? singlepost;
+
   final HttpConfig api = HttpConfig();
   final shared = PreferencesService();
 
@@ -34,6 +37,20 @@ class PostService extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print(e);
+    }
+  }
+
+  Future getallPostnewversion() async {
+    try {
+      api.response = await api.dio.get(
+        '/postsnewversion',
+      );
+      var _adat = api.response!.data;
+      postlist = _adat[0].map((e) => PostModel.fromJson(e)).toList();
+      taglist = _adat[1].map((e) => TagModel.fromJson(e)).toList();
+      notifyListeners();
+    } catch (e) {
+      // print(e);
     }
   }
 

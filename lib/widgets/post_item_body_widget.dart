@@ -14,11 +14,17 @@ class PostListItemBody extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Flexible(
-          child: Text(postitem.title,
-              style: const TextStyle(
-                fontSize: 20.0,
-              )),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(postitem.title,
+                style: const TextStyle(
+                  fontSize: 20.0,
+                )),
+            for (int i = 0; i < postitem.tags.length; i++)
+              Container(color: Colors.blue, child: Text(postitem.tags[i].name)),
+          ],
         ),
         Text(postitem.user!.name),
       ],
