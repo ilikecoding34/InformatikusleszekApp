@@ -12,6 +12,7 @@ class PostService extends ChangeNotifier {
   bool isLoading = false;
   List<dynamic> postlist = [];
   List<dynamic> taglist = [];
+  List<dynamic> filteredposts = [];
   PostModel? singlepost;
 
   final HttpConfig api = HttpConfig();
@@ -47,11 +48,33 @@ class PostService extends ChangeNotifier {
       );
       var _adat = api.response!.data;
       postlist = _adat[0].map((e) => PostModel.fromJson(e)).toList();
+      filteredposts = postlist;
       taglist = _adat[1].map((e) => TagModel.fromJson(e)).toList();
       notifyListeners();
     } catch (e) {
       // print(e);
     }
+  }
+
+  filterPosts(String name) {
+    List<dynamic> filteringposts = [];
+    if (name == 'all') {
+      filteredposts = postlist;
+    } else {
+      for (int i = 0; i < postlist.length; i++) {
+        if (postlist[i].tags != null) {
+          if (postlist[i].tags.length > 0) {
+            for (var tag in postlist[i].tags) {
+              if (tag.name == name) {
+                filteringposts.add(postlist[i]);
+              }
+            }
+          }
+        }
+      }
+      filteredposts = filteringposts;
+    }
+    notifyListeners();
   }
 
   Future getPost({int? id}) async {

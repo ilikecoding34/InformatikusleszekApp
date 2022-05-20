@@ -21,7 +21,6 @@ class PostListScreen extends StatefulWidget {
 class _PostListScreenState extends State<PostListScreen> {
   String? title;
   List<dynamic> loadedposts = [];
-  List<PostModel> filteredposts = [];
 
   PreferencesService shared = PreferencesService();
 
@@ -40,15 +39,6 @@ class _PostListScreenState extends State<PostListScreen> {
     Provider.of<ThemeService>(context, listen: false).changeMode(darkModeOn);
   }
 
-  loadposts() async {
-    await Provider.of<PostService>(context, listen: false)
-        .getallPostnewversion();
-
-    setState(() {
-      loadedposts = Provider.of<PostService>(context, listen: true).postlist;
-    });
-  }
-
 /*
   Future userLoad() async {
     bool userLoggedIn = await shared.readUserId();
@@ -62,7 +52,7 @@ class _PostListScreenState extends State<PostListScreen> {
     // TODO: implement initState
     super.initState();
     themeLoad();
-    loadposts();
+    Provider.of<PostService>(context, listen: false).getallPostnewversion();
   }
 
   @override
@@ -112,43 +102,36 @@ class _PostListScreenState extends State<PostListScreen> {
       ),
       body: Consumer<PostService>(
         builder: (context, post, child) {
-          if (post.postlist.isNotEmpty) {
+          if (post.filteredposts.isNotEmpty) {
             return Column(
               children: [
                 Padding(
                     padding: const EdgeInsets.only(top: 10),
                     child: Wrap(
                       children: [
-                        Chip(
-                            label: ElevatedButton(
-                                child: const Text("Mind"),
-                                onPressed: () {
-                                  setState(() {
-                                    loadedposts = post.postlist;
-                                  });
-                                })),
+                        Padding(
+                            padding: EdgeInsets.only(right: 10),
+                            child: GestureDetector(
+                                onTap: () {
+                                  Provider.of<PostService>(context,
+                                          listen: false)
+                                      .filterPosts('all');
+                                },
+                                child: const Chip(
+                                  label: Text("Mind"),
+                                ))),
                         for (var item in post.taglist)
-                          Chip(
-                              label: ElevatedButton(
-                            child: Text(item.name),
-                            onPressed: () {
-                              filteredposts.clear();
-                              for (int i = 0; i < post.postlist.length; i++) {
-                                if (post.postlist[i].tags != null) {
-                                  if (post.postlist[i].tags.length > 0) {
-                                    for (var tag in post.postlist[i].tags) {
-                                      if (tag.name == item.name) {
-                                        filteredposts.add(post.postlist[i]);
-                                      }
-                                    }
-                                  }
-                                }
-                              }
-                              setState(() {
-                                loadedposts = filteredposts;
-                              });
-                            },
-                          )),
+                          Padding(
+                              padding: EdgeInsets.only(right: 10),
+                              child: GestureDetector(
+                                  onTap: () {
+                                    Provider.of<PostService>(context,
+                                            listen: false)
+                                        .filterPosts(item.name);
+                                  },
+                                  child: Chip(
+                                    label: Text(item.name),
+                                  ))),
                       ],
                     )),
                 Expanded(
@@ -157,9 +140,9 @@ class _PostListScreenState extends State<PostListScreen> {
                               color: Colors.black,
                             ),
                         padding: const EdgeInsets.all(8),
-                        itemCount: loadedposts.length,
+                        itemCount: post.filteredposts.length,
                         itemBuilder: (BuildContext context, int index) {
-                          PostModel postitem = loadedposts[index];
+                          PostModel postitem = post.filteredposts[index];
                           return PostListItem(
                             postitem: postitem,
                             openitem: () =>
