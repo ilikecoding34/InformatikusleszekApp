@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:blog/config/http_config.dart';
 import 'package:blog/models/post_model.dart';
 import 'package:blog/models/tag_model.dart';
@@ -10,9 +12,11 @@ class PostService extends ChangeNotifier {
   bool collapse = false;
   bool postedit = false;
   bool isLoading = false;
+  List<String> tagFilterList = [];
   List<int> tagselected = [];
   List<dynamic> postlist = [];
   List<dynamic> taglist = [];
+  List<dynamic> taglistoriginal = [];
   List<dynamic> filteredposts = [];
   PostModel? singlepost;
 
@@ -50,7 +54,11 @@ class PostService extends ChangeNotifier {
       var _adat = api.response!.data;
       postlist = _adat[0].map((e) => PostModel.fromJson(e)).toList();
       filteredposts = postlist;
-      taglist = _adat[1].map((e) => TagModel.fromJson(e)).toList();
+      taglistoriginal = _adat[1].map((e) => TagModel.fromJson(e)).toList();
+      taglistoriginal.sort((a, b) {
+        return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+      });
+      taglist = taglistoriginal;
       notifyListeners();
     } catch (e) {
       // print(e);
@@ -63,17 +71,28 @@ class PostService extends ChangeNotifier {
   }
 
   filterPosts(String name) {
+    if (name != 'all') {
+      tagFilterList.contains(name)
+          ? tagFilterList.remove(name)
+          : tagFilterList.add(name);
+    }
     List<dynamic> filteringposts = [];
-    if (name == 'all') {
+    if (name == 'all' || tagFilterList.isEmpty) {
+      tagFilterList.clear();
       filteredposts = postlist;
     } else {
+      tagFilterList.sort((a, b) {
+        return a.toLowerCase().compareTo(b.toLowerCase());
+      });
       for (int i = 0; i < postlist.length; i++) {
+        List posttagarray = [];
         if (postlist[i].tags != null) {
           if (postlist[i].tags.length > 0) {
             for (var tag in postlist[i].tags) {
-              if (tag.name == name) {
-                filteringposts.add(postlist[i]);
-              }
+              posttagarray.add(tag.name);
+            }
+            if (Set.of(posttagarray).containsAll(tagFilterList)) {
+              filteringposts.add(postlist[i]);
             }
           }
         }

@@ -102,7 +102,7 @@ class _PostListScreenState extends State<PostListScreen> {
       ),
       body: Consumer<PostService>(
         builder: (context, post, child) {
-          if (post.filteredposts.isNotEmpty) {
+          if (post.postlist.isNotEmpty) {
             return Column(
               children: [
                 Padding(
@@ -110,45 +110,80 @@ class _PostListScreenState extends State<PostListScreen> {
                     child: Wrap(
                       children: [
                         Padding(
-                            padding: EdgeInsets.only(right: 10),
+                            padding:
+                                const EdgeInsets.only(right: 10, bottom: 10),
                             child: GestureDetector(
                                 onTap: () {
                                   Provider.of<PostService>(context,
                                           listen: false)
                                       .filterPosts('all');
                                 },
-                                child: const Chip(
-                                  label: Text("Mind"),
+                                child: Chip(
+                                  label: Text(
+                                    "Mind",
+                                    style: TextStyle(
+                                        color: post.tagFilterList.isEmpty
+                                            ? Colors.blue
+                                            : Colors.white),
+                                  ),
                                 ))),
                         for (var item in post.taglist)
+                          post.tagFilterList.contains(item.name)
+                              ? const SizedBox.shrink()
+                              : Padding(
+                                  padding: const EdgeInsets.only(right: 10),
+                                  child: GestureDetector(
+                                      onTap: () {
+                                        post.filterPosts(item.name);
+                                      },
+                                      child: Chip(
+                                        label: Text(
+                                          item.name,
+                                          style: TextStyle(
+                                              color: post.tagFilterList
+                                                      .contains(item.name)
+                                                  ? Colors.blue
+                                                  : Colors.white),
+                                        ),
+                                      ))),
+                        for (var item in post.tagFilterList)
                           Padding(
-                              padding: EdgeInsets.only(right: 10),
+                              padding: const EdgeInsets.only(right: 10),
                               child: GestureDetector(
                                   onTap: () {
-                                    Provider.of<PostService>(context,
-                                            listen: false)
-                                        .filterPosts(item.name);
+                                    post.filterPosts(item);
                                   },
                                   child: Chip(
-                                    label: Text(item.name),
+                                    label: Text(
+                                      item,
+                                      style: TextStyle(
+                                          color:
+                                              post.tagFilterList.contains(item)
+                                                  ? Colors.blue
+                                                  : Colors.white),
+                                    ),
                                   ))),
                       ],
                     )),
-                Expanded(
-                    child: ListView.separated(
-                        separatorBuilder: (context, index) => const Divider(
-                              color: Colors.black,
-                            ),
-                        padding: const EdgeInsets.all(8),
-                        itemCount: post.filteredposts.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          PostModel postitem = post.filteredposts[index];
-                          return PostListItem(
-                            postitem: postitem,
-                            openitem: () =>
-                                openPost(postitem.title, postitem.id),
-                          );
-                        }))
+                post.filteredposts.isNotEmpty
+                    ? Expanded(
+                        child: ListView.separated(
+                            separatorBuilder: (context, index) => const Divider(
+                                  color: Colors.black,
+                                ),
+                            padding: const EdgeInsets.all(8),
+                            itemCount: post.filteredposts.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              PostModel postitem = post.filteredposts[index];
+                              return PostListItem(
+                                postitem: postitem,
+                                openitem: () =>
+                                    openPost(postitem.title, postitem.id),
+                              );
+                            }))
+                    : const Center(
+                        child: Text('Nincs eredmény'),
+                      )
               ],
             );
           } else {

@@ -4,7 +4,6 @@ import 'package:blog/services/comment_service.dart';
 import 'package:blog/services/post_service.dart';
 import 'package:blog/widgets/comment_tile_widget.dart';
 import 'package:blog/widgets/new_comment_widget.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -12,7 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'login_page.dart';
 
 class SinglePostScreen extends StatelessWidget {
-  SinglePostScreen({Key? key, required this.title});
+  SinglePostScreen({required this.title});
 
   final String title;
   TextEditingController posttitlecontroller = TextEditingController();
@@ -166,7 +165,12 @@ class SinglePostScreen extends StatelessWidget {
                                         )))
                             ],
                           )
-                        : Container(),
+                        : Wrap(children: [
+                            ...getpost.tags.map((tag) => Padding(
+                                  padding: const EdgeInsets.only(right: 10),
+                                  child: Chip(label: Text(tag.name)),
+                                ))
+                          ]),
                     getpost.comments.isNotEmpty
                         ? Row(
                             mainAxisAlignment: MainAxisAlignment.center,
