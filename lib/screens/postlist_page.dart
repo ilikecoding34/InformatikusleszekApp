@@ -20,6 +20,10 @@ class PostListScreen extends StatefulWidget {
 
 class _PostListScreenState extends State<PostListScreen> {
   String? title;
+  double startpoint = 0.0;
+  double distance = 0.0;
+  bool isTop = false;
+  ScrollController _controller = ScrollController();
   List<dynamic> loadedposts = [];
 
   PreferencesService shared = PreferencesService();
@@ -39,6 +43,17 @@ class _PostListScreenState extends State<PostListScreen> {
     Provider.of<ThemeService>(context, listen: false).changeMode(darkModeOn);
   }
 
+  _scrollListener() {
+    if (_controller.position.atEdge) {
+      isTop = _controller.position.pixels == 0;
+    }
+  }
+
+  final snackBar = const SnackBar(
+    behavior: SnackBarBehavior.floating,
+    content: Text('Frissítés megtörtént'),
+  );
+
 /*
   Future userLoad() async {
     bool userLoggedIn = await shared.readUserId();
@@ -51,6 +66,8 @@ class _PostListScreenState extends State<PostListScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    _controller = ScrollController();
+    _controller.addListener(_scrollListener);
     themeLoad();
     Provider.of<PostService>(context, listen: false).getallPostnewversion();
   }
@@ -60,7 +77,8 @@ class _PostListScreenState extends State<PostListScreen> {
     final themeNotifier = Provider.of<ThemeService>(context);
     bool isloggedin =
         Provider.of<AuthService>(context, listen: true).authenticated;
-
+    double screenwidth = MediaQuery.of(context).size.width;
+    int numberOfLines = (screenwidth / 17).floor();
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -114,9 +132,7 @@ class _PostListScreenState extends State<PostListScreen> {
                                 const EdgeInsets.only(right: 10, bottom: 10),
                             child: GestureDetector(
                                 onTap: () {
-                                  Provider.of<PostService>(context,
-                                          listen: false)
-                                      .filterPosts('all');
+                                  post.filterPosts('all');
                                 },
                                 child: Chip(
                                   label: Text(
@@ -165,22 +181,125 @@ class _PostListScreenState extends State<PostListScreen> {
                                   ))),
                       ],
                     )),
+                ClipRect(
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    heightFactor: (post.calculatedswipe < 0)
+                        ? 0
+                        : post.calculatedswipe / 100,
+                    child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Container(
+                            height: 50,
+                            child: Stack(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    for (int i = 0; i < numberOfLines; i++)
+                                      RotationTransition(
+                                          turns: const AlwaysStoppedAnimation(
+                                              45 / 360),
+                                          child: Padding(
+                                            padding:
+                                                const EdgeInsets.only(right: 5),
+                                            child: Container(
+                                              height: 50,
+                                              width: 10,
+                                              decoration: BoxDecoration(
+                                                  color: (post.calculatedswipe
+                                                                          .floor() %
+                                                                      20 <
+                                                                  10 &&
+                                                              post.calculatedswipe
+                                                                          .floor() %
+                                                                      20 >
+                                                                  0
+                                                          ? i.isEven
+                                                          : i.isOdd)
+                                                      ? Colors.blue
+                                                      : Colors.green,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                            ),
+                                          )),
+                                  ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 10),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      const Text(
+                                        'Frissítés',
+                                        style: TextStyle(
+                                            backgroundColor: Colors.grey),
+                                      ),
+                                      RotationTransition(
+                                        turns: AlwaysStoppedAnimation(
+                                            post.calculatedswipe / 100),
+                                        child: const Icon(Icons.autorenew),
+                                      )
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ))),
+                  ),
+                ),
                 post.filteredposts.isNotEmpty
                     ? Expanded(
-                        child: ListView.separated(
-                            separatorBuilder: (context, index) => const Divider(
-                                  color: Colors.black,
-                                ),
-                            padding: const EdgeInsets.all(8),
-                            itemCount: post.filteredposts.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              PostModel postitem = post.filteredposts[index];
-                              return PostListItem(
-                                postitem: postitem,
-                                openitem: () =>
-                                    openPost(postitem.title, postitem.id),
-                              );
-                            }))
+                        child: Listener(
+                            onPointerDown: (PointerDownEvent detail) => {
+                                  startpoint =
+                                      detail.position.dy.floorToDouble(),
+                                  post.refreshing = true,
+                                },
+                            onPointerMove: (PointerMoveEvent detail) => {
+                                  if (_controller.position.pixels == 0)
+                                    {
+                                      distance =
+                                          detail.position.dy.floorToDouble(),
+                                      post.refreshMovement(
+                                          startpoint, distance),
+                                      if (post.refresdone)
+                                        {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(snackBar),
+                                          post.refresdone = false,
+                                        }
+                                    }
+                                  else
+                                    {
+                                      post.refreshing = false,
+                                      post.refreshMovement(
+                                          startpoint, distance),
+                                    }
+                                },
+                            onPointerUp: (value) => {
+                                  post.refreshing = false,
+                                  post.refreshMovement(startpoint, distance),
+                                },
+                            child: ListView.separated(
+                                separatorBuilder: (context, index) =>
+                                    const Divider(
+                                      color: Colors.black,
+                                    ),
+                                padding: const EdgeInsets.all(8),
+                                controller: _controller,
+                                itemCount: post.filteredposts.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  PostModel postitem =
+                                      post.filteredposts[index];
+                                  return PostListItem(
+                                    postitem: postitem,
+                                    openitem: () =>
+                                        openPost(postitem.title, postitem.id),
+                                  );
+                                })))
                     : const Center(
                         child: Text('Nincs eredmény'),
                       )

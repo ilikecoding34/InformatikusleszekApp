@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:blog/config/http_config.dart';
 import 'package:blog/models/post_model.dart';
 import 'package:blog/models/tag_model.dart';
@@ -12,6 +10,9 @@ class PostService extends ChangeNotifier {
   bool collapse = false;
   bool postedit = false;
   bool isLoading = false;
+  bool refreshing = false;
+  bool refresdone = false;
+  double calculatedswipe = 0.0;
   List<String> tagFilterList = [];
   List<int> tagselected = [];
   List<dynamic> postlist = [];
@@ -25,6 +26,20 @@ class PostService extends ChangeNotifier {
 
   void changecollapse() {
     collapse = !collapse;
+    notifyListeners();
+  }
+
+  void refreshMovement(double start, double distance) {
+    if (distance - start > 80 && refreshing) {
+      refreshing = false;
+      //   getallPostnewversion();
+      refresdone = true;
+    } else {
+      calculatedswipe = distance - start;
+    }
+    if (refreshing == false || calculatedswipe < 0) {
+      calculatedswipe = 0.0;
+    }
     notifyListeners();
   }
 
