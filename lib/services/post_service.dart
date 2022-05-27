@@ -32,7 +32,7 @@ class PostService extends ChangeNotifier {
   void refreshMovement(double start, double distance) {
     if (distance - start > 80 && refreshing) {
       refreshing = false;
-      //   getallPostnewversion();
+      getallPostnewversion();
       refresdone = true;
     } else {
       calculatedswipe = distance - start;

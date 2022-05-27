@@ -1,42 +1,30 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PreferencesService {
-  final storage = FlutterSecureStorage();
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   Future readToken() async {
     String? token;
     SharedPreferences prefs = await _prefs;
-    if (kIsWeb) {
-      token = prefs.getString('token');
-    } else {
-      token = await storage.read(key: "token");
-    }
+    token = prefs.getString('token');
     return token;
   }
 
   Future readUserId() async {
     String? userid;
     SharedPreferences prefs = await _prefs;
-    if (kIsWeb) {
-      userid = prefs.getString('user_id');
-    } else {
-      userid = await storage.read(key: "user_id");
-    }
+    userid = prefs.getString('user_id');
     return userid;
   }
 
-  Future storeToken({String? token, String? userid}) async {
+  Future storeToken({String? token}) async {
     SharedPreferences prefs = await _prefs;
-    if (kIsWeb) {
-      prefs.setString('token', token!);
-      prefs.setString('user_id', userid!);
-    } else {
-      storage.write(key: 'token', value: token);
-      storage.write(key: 'user_id', value: userid);
-    }
+    prefs.setString('token', token!);
+  }
+
+  Future storeUserId({String? userid}) async {
+    SharedPreferences prefs = await _prefs;
+    prefs.setString('user_id', userid!);
   }
 
   storeThemeType(bool value) async {

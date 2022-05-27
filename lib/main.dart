@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
     final themeNotifier = Provider.of<ThemeService>(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Informatikusleszek',
       theme: themeNotifier.getTheme(),
       home: PostListScreen(title: 'Bejegyzés lista'),
     );

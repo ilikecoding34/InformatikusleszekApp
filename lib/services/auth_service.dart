@@ -47,7 +47,8 @@ class AuthService extends ChangeNotifier {
         userid = value.data['user_id'].toString();
       });
 
-      shared.storeToken(token: token, userid: userid);
+      shared.storeToken(token: token);
+      shared.storeUserId(userid: userid);
 
       if (token != null) {
         _isloggedin = true;
@@ -68,7 +69,8 @@ class AuthService extends ChangeNotifier {
         token = value.data['access_token'].toString();
       });
 
-      shared.storeToken(token: token, userid: userid);
+      shared.storeToken(token: token);
+      shared.storeUserId(userid: userid);
 
       verificationsent = true;
       bregistration = false;
