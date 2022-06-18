@@ -97,11 +97,19 @@ class SinglePostScreen extends StatelessWidget {
         body: Consumer<PostService>(builder: (context, post, child) {
           if (!post.isLoading) {
             bool show = Provider.of<PostService>(context).collapse;
-
+            double commentheight = 0.0;
+            if (getpost?.comments.length != null) {
+              commentheight = getpost!.comments.length * 0.1;
+            }
+            if (commentheight > 0.5) {
+              commentheight > 0.5;
+            }
             posttitlecontroller.text = getpost!.title;
             postlinkcontroller.text = getpost.link ?? '';
             postbodycontroller.text = getpost.body;
-
+            String filename = getpost.file == null
+                ? 'Nincs fájl feltöltve'
+                : getpost.file!.name!;
             return SingleChildScrollView(
                 reverse: true,
                 child: Column(
@@ -138,6 +146,18 @@ class SinglePostScreen extends StatelessWidget {
                             : TextField(
                                 controller: postbodycontroller,
                               )),
+                    getpost.file != null
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 10, bottom: 10),
+                            child: ElevatedButton(
+                                onPressed: () {
+                                  Provider.of<PostService>(context,
+                                          listen: false)
+                                      .getfile(id: getpost.file!.id!);
+                                },
+                                child: Text(filename)),
+                          )
+                        : Container(),
                     isPostEdit
                         ? Wrap(
                             children: [
@@ -195,7 +215,8 @@ class SinglePostScreen extends StatelessWidget {
                             duration: const Duration(seconds: 1),
                             height: show
                                 ? 0
-                                : (MediaQuery.of(context).size.height * 0.5),
+                                : (MediaQuery.of(context).size.height *
+                                    commentheight),
                             child: ListView.separated(
                                 separatorBuilder: (context, index) =>
                                     const Divider(

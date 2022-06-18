@@ -11,9 +11,6 @@ class PostListContainer extends StatelessWidget {
   final PostService post;
   final ScrollController controller;
 
-  double startpoint = 0.0;
-  double distance = 0.0;
-
   final snackBar = const SnackBar(
     behavior: SnackBarBehavior.floating,
     content: Text('Frissítés megtörtént'),
@@ -24,30 +21,24 @@ class PostListContainer extends StatelessWidget {
     return Expanded(
         child: Listener(
             onPointerDown: (PointerDownEvent detail) => {
-                  startpoint = detail.position.dy.floorToDouble(),
+                  if (!post.refreshing)
+                    {post.begin = detail.position.dy.floorToDouble()},
                   post.refreshing = true,
                 },
             onPointerMove: (PointerMoveEvent detail) => {
-                  if (controller.position.pixels == 0)
+                  if (post.refreshing)
                     {
-                      distance = detail.position.dy.floorToDouble(),
-                      post.refreshMovement(startpoint, distance),
-                      if (post.refresdone)
-                        {
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar),
-                          post.refresdone = false,
-                        }
-                    }
-                  else
+                      post.end = detail.position.dy.floorToDouble(),
+                      post.refreshMovement()
+                    },
+                  if (post.refresdone)
                     {
-                      post.refreshing = false,
-                      post.refreshMovement(startpoint, distance),
-                    }
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar),
+                      post.refresdone = false,
+                    },
                 },
-            onPointerUp: (value) => {
-                  post.refreshing = false,
-                  post.refreshMovement(startpoint, distance),
-                },
+            onPointerUp: (value) =>
+                {post.refreshing = false, post.refreshMovement()},
             child: ListView.separated(
                 separatorBuilder: (context, index) => const Divider(
                       color: Colors.black,

@@ -1,4 +1,5 @@
 import 'package:blog/models/comment_model.dart';
+import 'package:blog/models/file_model.dart';
 import 'package:blog/models/tag_model.dart';
 import 'package:blog/models/user_model.dart';
 
@@ -8,6 +9,7 @@ class PostModel {
   String? link;
   String body;
   UserModel? user;
+  FileModel? file;
   List<TagModel> tags;
   List<CommentModel> comments;
 
@@ -20,6 +22,7 @@ class PostModel {
         link = json['link'],
         body = json['body'],
         user = UserModel.fromJson(json['user']),
+        file = json["file"] == null ? null : FileModel.fromJson(json['file']),
         tags = json["tags"] == null
             ? <TagModel>[]
             : List<TagModel>.from(json["tags"].map((x) => TagModel.fromJson(x)))

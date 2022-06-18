@@ -18,10 +18,12 @@ class PostListItemBody extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(postitem.title,
-                style: const TextStyle(
-                  fontSize: 20.0,
-                )),
+            Container(
+                width: MediaQuery.of(context).size.width * 0.6,
+                child: Text(postitem.title,
+                    style: const TextStyle(
+                      fontSize: 20.0,
+                    ))),
             for (int i = 0; i < postitem.tags.length; i++)
               Container(color: Colors.blue, child: Text(postitem.tags[i].name)),
           ],

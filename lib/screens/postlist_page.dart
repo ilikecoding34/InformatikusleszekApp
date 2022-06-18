@@ -1,11 +1,8 @@
-import 'package:blog/models/post_model.dart';
-import 'package:blog/screens/singlepost_page.dart';
 import 'package:blog/services/auth_service.dart';
 import 'package:blog/services/post_service.dart';
 import 'package:blog/services/sharedpreferences_service.dart';
 import 'package:blog/services/theme_service.dart';
 import 'package:blog/widgets/post_list_container_widget.dart';
-import 'package:blog/widgets/post_list_item_widget.dart';
 import 'package:blog/widgets/refresh_widget.dart';
 import 'package:blog/widgets/tags_chip_widget.dart';
 import 'package:flutter/material.dart';

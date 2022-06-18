@@ -5,6 +5,7 @@ import 'package:blog/services/sharedpreferences_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:open_file/open_file.dart';
 
 class PostService extends ChangeNotifier {
   bool collapse = false;
@@ -13,6 +14,8 @@ class PostService extends ChangeNotifier {
   bool refreshing = false;
   bool refresdone = false;
   double calculatedswipe = 0.0;
+  double begin = 0.0;
+  double end = 0.0;
   List<String> tagFilterList = [];
   List<int> tagselected = [];
   List<dynamic> postlist = [];
@@ -29,13 +32,13 @@ class PostService extends ChangeNotifier {
     notifyListeners();
   }
 
-  void refreshMovement(double start, double distance) {
-    if (distance - start > 80 && refreshing) {
+  void refreshMovement() {
+    if (end - begin > 100 && refreshing) {
       refreshing = false;
       getallPostnewversion();
       refresdone = true;
     } else {
-      calculatedswipe = distance - start;
+      calculatedswipe = end - begin;
     }
     if (refreshing == false || calculatedswipe < 0) {
       calculatedswipe = 0.0;
@@ -117,7 +120,7 @@ class PostService extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future getPost({int? id}) async {
+  Future getPost({required int id}) async {
     postedit = false;
     try {
       api.response = await api.dio.get(
@@ -126,6 +129,22 @@ class PostService extends ChangeNotifier {
       var _adat = api.response!.data;
       singlepost = PostModel.fromJson(_adat);
       isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      // print(e);
+    }
+  }
+
+  Future getfile({required int id}) async {
+    String? token = await shared.readToken();
+    try {
+      api.response = await api.dio.get(
+        '/filecontrol/$id',
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+      String filename = api.response.toString().substring(8);
+      await OpenFile.open(
+          'https://informatikusleszek.hu/storage/app/public/$filename');
       notifyListeners();
     } catch (e) {
       // print(e);
