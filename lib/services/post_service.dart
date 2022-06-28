@@ -128,6 +128,8 @@ class PostService extends ChangeNotifier {
       );
       var _adat = api.response!.data;
       singlepost = PostModel.fromJson(_adat);
+      tagselected.clear();
+      singlepost!.tags.map((e) => {tagselected.add(e.id)}).toList();
       isLoading = false;
       notifyListeners();
     } catch (e) {

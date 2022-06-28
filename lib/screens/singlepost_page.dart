@@ -1,4 +1,5 @@
 import 'package:blog/models/post_model.dart';
+import 'package:blog/screens/editpost_page.dart';
 import 'package:blog/services/auth_service.dart';
 import 'package:blog/services/comment_service.dart';
 import 'package:blog/services/post_service.dart';
@@ -57,32 +58,17 @@ class SinglePostScreen extends StatelessWidget {
               }),
           actions: [
             isloggedin
-                ? isPostEdit
-                    ? IconButton(
-                        onPressed: () async {
-                          postdatas = {
-                            'id': getpost!.id,
-                            'userid': 1,
-                            'title': posttitlecontroller.text,
-                            'link': postlinkcontroller.text,
-                            'content': postbodycontroller.text,
-                            'tags': selected,
-                            'category': 1
-                          };
-
-                          await Provider.of<PostService>(context, listen: false)
-                              .modifyPost(datas: postdatas)
-                              .then((value) => Provider.of<PostService>(context,
-                                      listen: false)
-                                  .getPost(id: value));
-                        },
-                        icon: const Icon(Icons.save))
-                    : IconButton(
-                        onPressed: () {
-                          Provider.of<PostService>(context, listen: false)
-                              .setToModify();
-                        },
-                        icon: const Icon(Icons.edit))
+                ? IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => EditPostScreen(
+                                  title: '',
+                                )),
+                      );
+                    },
+                    icon: const Icon(Icons.edit))
                 : IconButton(
                     onPressed: () {
                       Navigator.push(
@@ -99,17 +85,15 @@ class SinglePostScreen extends StatelessWidget {
             bool show = Provider.of<PostService>(context).collapse;
             double commentheight = 0.0;
             if (getpost?.comments.length != null) {
-              commentheight = getpost!.comments.length * 0.1;
+              commentheight = getpost!.comments.length * 0.12;
             }
             if (commentheight > 0.5) {
               commentheight > 0.5;
             }
-            posttitlecontroller.text = getpost!.title;
-            postlinkcontroller.text = getpost.link ?? '';
-            postbodycontroller.text = getpost.body;
-            String filename = getpost.file == null
+
+            String? filename = getpost!.file == null
                 ? 'Nincs fájl feltöltve'
-                : getpost.file!.name!;
+                : getpost.file?.name;
             return SingleChildScrollView(
                 reverse: true,
                 child: Column(
@@ -123,29 +107,18 @@ class SinglePostScreen extends StatelessWidget {
                             : TextField(
                                 controller: posttitlecontroller,
                               )),
-                    !isPostEdit
-                        ? Visibility(
-                            child: Container(
-                                padding: const EdgeInsets.all(10),
-                                child: ElevatedButton(
-                                    onPressed: () =>
-                                        _launchURL(getpost.link ?? ''),
-                                    child: const Text('Link megnyitása'))),
-                            visible: getpost.link != null,
-                          )
-                        : Container(
-                            padding: const EdgeInsets.all(10),
-                            child: TextField(
-                              controller: postlinkcontroller,
-                            )),
+                    Visibility(
+                      child: Container(
+                          padding: const EdgeInsets.all(10),
+                          child: ElevatedButton(
+                              onPressed: () => _launchURL(getpost.link ?? ''),
+                              child: const Text('Link megnyitása'))),
+                      visible: getpost.link != null,
+                    ),
                     Container(
                         padding: const EdgeInsets.all(10),
-                        child: !isPostEdit
-                            ? SelectableText(getpost.body,
-                                style: const TextStyle(fontSize: 20.0))
-                            : TextField(
-                                controller: postbodycontroller,
-                              )),
+                        child: SelectableText(getpost.body,
+                            style: const TextStyle(fontSize: 20.0))),
                     getpost.file != null
                         ? Padding(
                             padding: const EdgeInsets.only(top: 10, bottom: 10),
@@ -155,42 +128,15 @@ class SinglePostScreen extends StatelessWidget {
                                           listen: false)
                                       .getfile(id: getpost.file!.id!);
                                 },
-                                child: Text(filename)),
+                                child: Text(filename!)),
                           )
                         : Container(),
-                    isPostEdit
-                        ? Wrap(
-                            children: [
-                              for (var item in taglist)
-                                AnimatedContainer(
-                                    duration: const Duration(milliseconds: 200),
-                                    height:
-                                        selected.contains(item.id) ? 30 : 40,
-                                    child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 10),
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            Provider.of<PostService>(context,
-                                                    listen: false)
-                                                .tagsSelection(item.id);
-                                          },
-                                          child: Chip(
-                                            backgroundColor:
-                                                selected.contains(item.id)
-                                                    ? Colors.blue
-                                                    : Colors.grey,
-                                            label: Text(item.name),
-                                          ),
-                                        )))
-                            ],
-                          )
-                        : Wrap(children: [
-                            ...getpost.tags.map((tag) => Padding(
-                                  padding: const EdgeInsets.only(right: 10),
-                                  child: Chip(label: Text(tag.name)),
-                                ))
-                          ]),
+                    Wrap(children: [
+                      ...getpost.tags.map((tag) => Padding(
+                            padding: const EdgeInsets.only(right: 10),
+                            child: Chip(label: Text(tag.name)),
+                          ))
+                    ]),
                     getpost.comments.isNotEmpty
                         ? Row(
                             mainAxisAlignment: MainAxisAlignment.center,

@@ -106,8 +106,6 @@ class NewPostPage extends StatelessWidget {
                 ),
                 Container(
                     padding: const EdgeInsets.all(10),
-                    width: 300.0,
-                    height: 100.0,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                           primary: Colors.cyan,
@@ -115,7 +113,7 @@ class NewPostPage extends StatelessWidget {
                             borderRadius: BorderRadius.circular(30.0),
                           ),
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 50, vertical: 20),
+                              horizontal: 20, vertical: 20),
                           textStyle: const TextStyle(
                               fontSize: 30, fontWeight: FontWeight.bold)),
                       child: const Text('Új bejegyzés',

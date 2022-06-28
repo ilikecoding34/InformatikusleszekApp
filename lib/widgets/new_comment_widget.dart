@@ -45,7 +45,7 @@ class NewComment extends StatelessWidget {
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   textStyle: const TextStyle(
                       fontSize: 30, fontWeight: FontWeight.bold)),
               onPressed: () async {

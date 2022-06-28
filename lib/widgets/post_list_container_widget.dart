@@ -21,7 +21,10 @@ class PostListContainer extends StatelessWidget {
     return Expanded(
         child: Listener(
             onPointerDown: (PointerDownEvent detail) => {
-                  if (!post.refreshing)
+                  if (!post.refreshing &&
+                      (controller.offset <=
+                              controller.position.minScrollExtent &&
+                          !controller.position.outOfRange))
                     {post.begin = detail.position.dy.floorToDouble()},
                   post.refreshing = true,
                 },
