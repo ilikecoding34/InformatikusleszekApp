@@ -13,20 +13,21 @@ class SelectedChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.only(right: 10),
-        child: GestureDetector(
-            onTap: () {
-              post.filterPosts(tagname);
-            },
-            child: Chip(
-              label: Text(
-                tagname,
-                style: TextStyle(
-                    color: post.tagFilterList.contains(tagname)
-                        ? Colors.blue
-                        : Colors.white),
-              ),
-            )));
+    return GestureDetector(
+        onTap: () {
+          post.filterPosts(tagname);
+        },
+        child: Chip(
+          onDeleted: () {
+            post.filterPosts(tagname);
+          },
+          label: Text(
+            tagname,
+            style: TextStyle(
+                color: post.tagFilterList.contains(tagname)
+                    ? Colors.blue
+                    : Colors.white),
+          ),
+        ));
   }
 }

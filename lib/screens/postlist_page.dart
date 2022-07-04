@@ -23,7 +23,6 @@ class _PostListScreenState extends State<PostListScreen> {
   double startpoint = 0.0;
   double distance = 0.0;
   bool isTop = false;
-  ScrollController _controller = ScrollController();
   List<dynamic> loadedposts = [];
 
   PreferencesService shared = PreferencesService();
@@ -31,12 +30,6 @@ class _PostListScreenState extends State<PostListScreen> {
   Future themeLoad() async {
     bool darkModeOn = await shared.readThemeType() ?? true;
     Provider.of<ThemeService>(context, listen: false).changeMode(darkModeOn);
-  }
-
-  _scrollListener() {
-    if (_controller.position.atEdge) {
-      isTop = _controller.position.pixels == 0;
-    }
   }
 
   Future userLoad() async {
@@ -50,8 +43,6 @@ class _PostListScreenState extends State<PostListScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _controller = ScrollController();
-    _controller.addListener(_scrollListener);
     themeLoad();
     userLoad();
     Provider.of<PostService>(context, listen: false).getallPostnewversion();
@@ -81,26 +72,28 @@ class _PostListScreenState extends State<PostListScreen> {
               icon: themeNotifier.getMode()
                   ? const Icon(Icons.dark_mode)
                   : const Icon(Icons.light_mode)),
-          isloggedin
-              ? IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              NewPostPage(pagetitle: 'Új bejegyzés')),
-                    );
-                  },
-                  icon: const Icon(Icons.playlist_add_outlined))
-              : IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const LoginScreen()),
-                    );
-                  },
-                  icon: const Icon(Icons.login))
+          Visibility(
+            child: IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            NewPostPage(pagetitle: 'Új bejegyzés')),
+                  );
+                },
+                icon: const Icon(Icons.playlist_add_outlined)),
+            replacement: IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const LoginScreen()),
+                  );
+                },
+                icon: const Icon(Icons.login)),
+            visible: isloggedin,
+          ),
         ],
       ),
       body: Consumer<PostService>(
@@ -110,17 +103,15 @@ class _PostListScreenState extends State<PostListScreen> {
           if (post.postlist.isNotEmpty) {
             return Column(
               children: [
-                Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: TagsChip(
-                      post: post,
-                    )),
+                TagsChip(
+                  post: post,
+                ),
                 RefreshList(
                     swiped: swiped,
                     numberOfLines: numberOfLines,
                     evenOrOdd: evenOrOdd),
                 post.filteredposts.isNotEmpty
-                    ? PostListContainer(post: post, controller: _controller)
+                    ? PostListContainer(post: post)
                     : const Center(
                         child: Text('Nincs eredmény'),
                       )

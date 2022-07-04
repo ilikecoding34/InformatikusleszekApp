@@ -29,7 +29,6 @@ class EditPostScreen extends StatelessWidget {
     PostModel? getpost = Provider.of<PostService>(context).singlepost;
     taglist = Provider.of<PostService>(context, listen: true).taglist;
     selected = Provider.of<PostService>(context, listen: true).tagselected;
-    print(selected);
     return Scaffold(
         appBar: AppBar(
           title: Text(title),
@@ -109,7 +108,9 @@ class EditPostScreen extends StatelessWidget {
                                 },
                                 child: Text(filename)),
                           )
-                        : Container(),
+                        : ElevatedButton(
+                            onPressed: null,
+                            child: const Text('File feltöltés')),
                     Wrap(
                       children: [
                         for (var item in taglist)

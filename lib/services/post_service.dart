@@ -165,8 +165,10 @@ class PostService extends ChangeNotifier {
           data: datas,
         );
         var _adat = api.response!.data;
+
         postedit = false;
         notifyListeners();
+
         return _adat['id'];
       } catch (e) {
         //  print(e);

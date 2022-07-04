@@ -11,22 +11,22 @@ class TagsChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Wrap(
+      runSpacing: 0.0,
+      spacing: 10.0,
       children: [
-        Padding(
-            padding: const EdgeInsets.only(right: 10, bottom: 10),
-            child: GestureDetector(
-                onTap: () {
-                  post.filterPosts('all');
-                },
-                child: Chip(
-                  label: Text(
-                    "Mind",
-                    style: TextStyle(
-                        color: post.tagFilterList.isEmpty
-                            ? Colors.blue
-                            : Colors.white),
-                  ),
-                ))),
+        GestureDetector(
+            onTap: () {
+              post.filterPosts('all');
+            },
+            child: Chip(
+              label: Text(
+                "Mind",
+                style: TextStyle(
+                    color: post.tagFilterList.isEmpty
+                        ? Colors.blue
+                        : Colors.white),
+              ),
+            )),
         for (var item in post.taglist)
           post.tagFilterList.contains(item.name)
               ? const SizedBox.shrink()
