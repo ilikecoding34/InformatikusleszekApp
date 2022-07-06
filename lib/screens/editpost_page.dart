@@ -6,9 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class EditPostScreen extends StatelessWidget {
-  EditPostScreen({Key? key, required this.title}) : super(key: key);
+  EditPostScreen({Key? key}) : super(key: key);
 
-  final String title;
   TextEditingController posttitlecontroller = TextEditingController();
   TextEditingController postbodycontroller = TextEditingController();
   TextEditingController postlinkcontroller = TextEditingController();
@@ -25,20 +24,20 @@ class EditPostScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isloggedin = Provider.of<AuthService>(context).authenticated;
+    bool authok = Provider.of<AuthService>(context).authenticated;
     PostModel? getpost = Provider.of<PostService>(context).singlepost;
     taglist = Provider.of<PostService>(context, listen: true).taglist;
     selected = Provider.of<PostService>(context, listen: true).tagselected;
     return Scaffold(
         appBar: AppBar(
-          title: Text(title),
+          title: const Text('Szerkesztés'),
           leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
                 Navigator.pop(context);
               }),
           actions: [
-            isloggedin
+            authok
                 ? IconButton(
                     onPressed: () async {
                       postdatas = {
@@ -70,7 +69,7 @@ class EditPostScreen extends StatelessWidget {
           ],
         ),
         body: Consumer<PostService>(builder: (context, post, child) {
-          if (!post.isLoading) {
+          if (!post.getIsloading) {
             posttitlecontroller.text = getpost!.title;
             postlinkcontroller.text = getpost.link ?? '';
             postbodycontroller.text = getpost.body;

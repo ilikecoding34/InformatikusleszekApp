@@ -41,8 +41,6 @@ class SinglePostScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isloggedin = Provider.of<AuthService>(context).authenticated;
-    bool isEditing = Provider.of<CommentService>(context).commentedit;
-    bool isPostEdit = Provider.of<PostService>(context).postedit;
     PostModel? getpost = Provider.of<PostService>(context).singlepost;
     taglist = Provider.of<PostService>(context, listen: true).taglist;
     selected = Provider.of<PostService>(context, listen: true).tagselected;
@@ -63,9 +61,7 @@ class SinglePostScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => EditPostScreen(
-                                  title: '',
-                                )),
+                            builder: (context) => EditPostScreen()),
                       );
                     },
                     icon: const Icon(Icons.edit))
@@ -81,7 +77,7 @@ class SinglePostScreen extends StatelessWidget {
           ],
         ),
         body: Consumer<PostService>(builder: (context, post, child) {
-          if (!post.isLoading) {
+          if (!post.getIsloading) {
             bool show = Provider.of<PostService>(context).collapse;
             double commentheight = 0.0;
             if (getpost?.comments.length != null) {
@@ -101,12 +97,8 @@ class SinglePostScreen extends StatelessWidget {
                   children: [
                     Container(
                         padding: const EdgeInsets.all(10),
-                        child: !isPostEdit
-                            ? Text(getpost.title,
-                                style: const TextStyle(fontSize: 30.0))
-                            : TextField(
-                                controller: posttitlecontroller,
-                              )),
+                        child: Text(getpost.title,
+                            style: const TextStyle(fontSize: 30.0))),
                     Visibility(
                       child: Container(
                           padding: const EdgeInsets.all(10),
@@ -181,7 +173,6 @@ class SinglePostScreen extends StatelessWidget {
                                       commentcontroller: commentcontroller,
                                       getpost: getpost,
                                       index: index,
-                                      isEditing: isEditing,
                                       isloggedin: isloggedin);
                                 }))
                         : Container(),

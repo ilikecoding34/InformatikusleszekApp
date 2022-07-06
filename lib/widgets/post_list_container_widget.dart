@@ -53,26 +53,26 @@ class _PostListContainerState extends State<PostListContainer> {
     return Expanded(
         child: Listener(
             onPointerDown: (PointerDownEvent detail) => {
-                  if (!post.refreshing && (isTop))
+                  if (!post.getRefreshing && (isTop))
                     {
                       post.begin = detail.position.dy.floorToDouble(),
-                      post.refreshing = true,
+                      post.setRefreshing = true,
                     },
                 },
             onPointerMove: (PointerMoveEvent detail) => {
-                  if (post.refreshing)
+                  if (post.getRefreshing)
                     {
                       post.end = detail.position.dy.floorToDouble(),
                       post.refreshMovement()
                     },
-                  if (post.refresdone)
+                  if (post.getRefresdone)
                     {
                       ScaffoldMessenger.of(context).showSnackBar(snackBar),
-                      post.refresdone = false,
+                      post.setRefresdone = false,
                     },
                 },
             onPointerUp: (value) =>
-                {post.refreshing = false, post.refreshMovement()},
+                {post.setRefreshing = false, post.refreshMovement()},
             child: Stack(
               children: [
                 ListView.separated(
@@ -90,7 +90,7 @@ class _PostListContainerState extends State<PostListContainer> {
                           Provider.of<PostService>(context, listen: false)
                               .collapse = true;
                           Provider.of<PostService>(context, listen: false)
-                              .isLoading = true;
+                              .setIsloading = true;
                           Navigator.push(
                             context,
                             MaterialPageRoute(

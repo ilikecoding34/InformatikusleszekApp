@@ -13,11 +13,9 @@ class CommentTile extends StatelessWidget {
       required this.commentcontroller,
       required this.getpost,
       required this.index,
-      required this.isEditing,
       required this.isloggedin})
       : super(key: key);
 
-  final bool isEditing;
   final int index;
   final List<CommentModel> commentlist;
   final bool isloggedin;
@@ -26,7 +24,8 @@ class CommentTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool edittile = isEditing &&
+    bool isCommentEdit = Provider.of<CommentService>(context).commentedit;
+    bool edittile = isCommentEdit &&
         Provider.of<CommentService>(context).commentchangeid == index;
     return Container(
       decoration: BoxDecoration(
@@ -69,7 +68,7 @@ class CommentTile extends StatelessWidget {
               ? DeleteComment(commentlist: commentlist, index: index)
               : Container(),
           isloggedin
-              ? isEditing &&
+              ? isCommentEdit &&
                       Provider.of<CommentService>(context).commentchangeid ==
                           index
                   ? ModifyComment(

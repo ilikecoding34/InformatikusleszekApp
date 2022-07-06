@@ -1,18 +1,22 @@
+import 'dart:io';
+
 import 'package:blog/config/http_config.dart';
 import 'package:blog/models/post_model.dart';
 import 'package:blog/models/tag_model.dart';
 import 'package:blog/services/sharedpreferences_service.dart';
 import 'package:dio/dio.dart';
+import 'package:flowder/flowder.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 
 class PostService extends ChangeNotifier {
   bool collapse = false;
   bool postedit = false;
-  bool isLoading = false;
-  bool refreshing = false;
-  bool refresdone = false;
+  bool _isLoading = false;
+  bool _refreshing = false;
+  bool _refresdone = false;
   double calculatedswipe = 0.0;
   double begin = 0.0;
   double end = 0.0;
@@ -24,8 +28,21 @@ class PostService extends ChangeNotifier {
   List<dynamic> filteredposts = [];
   PostModel? singlepost;
 
+  late DownloaderUtils options;
+  late DownloaderCore core;
+  late final String path;
+
   final HttpConfig api = HttpConfig();
   final shared = PreferencesService();
+
+  get getRefreshing => _refreshing;
+  set setRefreshing(bool val) => _refreshing = val;
+
+  get getRefresdone => _refresdone;
+  set setRefresdone(bool val) => _refresdone = val;
+
+  get getIsloading => _isLoading;
+  set setIsloading(bool val) => _isLoading = val;
 
   void changecollapse() {
     collapse = !collapse;
@@ -33,14 +50,14 @@ class PostService extends ChangeNotifier {
   }
 
   void refreshMovement() {
-    if (end - begin > 100 && refreshing) {
-      refreshing = false;
+    if (end - begin > 100 && _refreshing) {
+      _refreshing = false;
       getallPostnewversion();
-      refresdone = true;
+      _refresdone = true;
     } else {
       calculatedswipe = end - begin;
     }
-    if (refreshing == false || calculatedswipe < 0) {
+    if (_refreshing == false || calculatedswipe < 0) {
       calculatedswipe = 0.0;
     }
     notifyListeners();
@@ -130,7 +147,7 @@ class PostService extends ChangeNotifier {
       singlepost = PostModel.fromJson(_adat);
       tagselected.clear();
       singlepost!.tags.map((e) => {tagselected.add(e.id)}).toList();
-      isLoading = false;
+      _isLoading = false;
       notifyListeners();
     } catch (e) {
       // print(e);
@@ -139,14 +156,35 @@ class PostService extends ChangeNotifier {
 
   Future getfile({required int id}) async {
     String? token = await shared.readToken();
+
     try {
       api.response = await api.dio.get(
         '/filecontrol/$id',
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
       String filename = api.response.toString().substring(8);
+      DownloaderUtils(
+        progressCallback: (current, total) {
+          final progress = (current / total) * 100;
+        },
+        file: File('$path/$filename'),
+        progress: ProgressImplementation(),
+        onDone: () {
+          OpenFile.open('$path/$filename').then((value) {
+            // delete the file.
+            File f = File('$path/$filename');
+            f.delete();
+          });
+        },
+        deleteOnCancel: true,
+      );
+      core = await Flowder.download(
+        'https://informatikusleszek.hu/storage/app/public/$filename',
+        options,
+      );
+      /*
       await OpenFile.open(
-          'https://informatikusleszek.hu/storage/app/public/$filename');
+          'https://informatikusleszek.hu/storage/app/public/$filename');*/
       notifyListeners();
     } catch (e) {
       // print(e);
@@ -192,5 +230,20 @@ class PostService extends ChangeNotifier {
         //   print(e);
       }
     }
+  }
+
+  Future<void> initPlatformState() async {
+    _setPath();
+  }
+
+  void _setPath() async {
+    Directory _path = await getApplicationDocumentsDirectory();
+    String _localPath = _path.path + Platform.pathSeparator + 'Download';
+    final savedDir = Directory(_localPath);
+    bool hasExisted = await savedDir.exists();
+    if (!hasExisted) {
+      savedDir.create();
+    }
+    path = _localPath;
   }
 }
