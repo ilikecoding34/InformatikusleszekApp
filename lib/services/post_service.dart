@@ -1,19 +1,18 @@
 import 'dart:io';
-
 import 'package:blog/config/http_config.dart';
 import 'package:blog/models/post_model.dart';
 import 'package:blog/models/tag_model.dart';
 import 'package:blog/services/sharedpreferences_service.dart';
 import 'package:dio/dio.dart';
-import 'package:flowder/flowder.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
 class PostService extends ChangeNotifier {
-  bool collapse = false;
-  bool postedit = false;
+  bool _collapse = false;
+  bool _postedit = false;
   bool _isLoading = false;
   bool _refreshing = false;
   bool _refresdone = false;
@@ -21,15 +20,13 @@ class PostService extends ChangeNotifier {
   double begin = 0.0;
   double end = 0.0;
   List<String> tagFilterList = [];
-  List<int> tagselected = [];
+  List<int> _tagselected = [];
   List<dynamic> postlist = [];
-  List<dynamic> taglist = [];
-  List<dynamic> taglistoriginal = [];
+  List<dynamic> _taglist = [];
+  List<dynamic> _taglistoriginal = [];
   List<dynamic> filteredposts = [];
   PostModel? singlepost;
 
-  late DownloaderUtils options;
-  late DownloaderCore core;
   late final String path;
 
   final HttpConfig api = HttpConfig();
@@ -44,8 +41,17 @@ class PostService extends ChangeNotifier {
   get getIsloading => _isLoading;
   set setIsloading(bool val) => _isLoading = val;
 
+  get getCollapse => _collapse;
+  set setCollapse(bool val) => _collapse = val;
+
+  get getPostEdit => _postedit;
+  set setPostEdit(bool val) => _postedit = val;
+
+  get getSelectedTags => _tagselected;
+  get getAllTags => _taglist;
+
   void changecollapse() {
-    collapse = !collapse;
+    _collapse = !_collapse;
     notifyListeners();
   }
 
@@ -64,7 +70,7 @@ class PostService extends ChangeNotifier {
   }
 
   void setToModify() {
-    postedit = true;
+    _postedit = true;
     notifyListeners();
   }
 
@@ -89,11 +95,11 @@ class PostService extends ChangeNotifier {
       var _adat = api.response!.data;
       postlist = _adat[0].map((e) => PostModel.fromJson(e)).toList();
       filteredposts = postlist;
-      taglistoriginal = _adat[1].map((e) => TagModel.fromJson(e)).toList();
-      taglistoriginal.sort((a, b) {
+      _taglistoriginal = _adat[1].map((e) => TagModel.fromJson(e)).toList();
+      _taglistoriginal.sort((a, b) {
         return a.name.toLowerCase().compareTo(b.name.toLowerCase());
       });
-      taglist = taglistoriginal;
+      _taglist = _taglistoriginal;
       notifyListeners();
     } catch (e) {
       // print(e);
@@ -101,7 +107,7 @@ class PostService extends ChangeNotifier {
   }
 
   tagsSelection(int id) {
-    tagselected.contains(id) ? tagselected.remove(id) : tagselected.add(id);
+    _tagselected.contains(id) ? _tagselected.remove(id) : _tagselected.add(id);
     notifyListeners();
   }
 
@@ -138,15 +144,15 @@ class PostService extends ChangeNotifier {
   }
 
   Future getPost({required int id}) async {
-    postedit = false;
+    _postedit = false;
     try {
       api.response = await api.dio.get(
         '/post/$id',
       );
       var _adat = api.response!.data;
       singlepost = PostModel.fromJson(_adat);
-      tagselected.clear();
-      singlepost!.tags.map((e) => {tagselected.add(e.id)}).toList();
+      _tagselected.clear();
+      singlepost!.tags.map((e) => {_tagselected.add(e.id)}).toList();
       _isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -156,6 +162,11 @@ class PostService extends ChangeNotifier {
 
   Future getfile({required int id}) async {
     String? token = await shared.readToken();
+    var tempDir = await getExternalStorageDirectory();
+    String tempPath = tempDir!.path;
+
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    String appDocPath = appDocDir.path;
 
     try {
       api.response = await api.dio.get(
@@ -163,25 +174,14 @@ class PostService extends ChangeNotifier {
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
       String filename = api.response.toString().substring(8);
-      DownloaderUtils(
-        progressCallback: (current, total) {
-          final progress = (current / total) * 100;
-        },
-        file: File('$path/$filename'),
-        progress: ProgressImplementation(),
-        onDone: () {
-          OpenFile.open('$path/$filename').then((value) {
-            // delete the file.
-            File f = File('$path/$filename');
-            f.delete();
+
+      await FileDownloader.downloadFile(
+          url: 'https://informatikusleszek.hu/storage/app/public/$filename',
+          name: "PANDA",
+          onDownloadCompleted: (val) {
+            OpenFile.open(val);
           });
-        },
-        deleteOnCancel: true,
-      );
-      core = await Flowder.download(
-        'https://informatikusleszek.hu/storage/app/public/$filename',
-        options,
-      );
+
       /*
       await OpenFile.open(
           'https://informatikusleszek.hu/storage/app/public/$filename');*/
@@ -203,11 +203,8 @@ class PostService extends ChangeNotifier {
           data: datas,
         );
         var _adat = api.response!.data;
-
-        postedit = false;
+        _postedit = false;
         notifyListeners();
-
-        return _adat['id'];
       } catch (e) {
         //  print(e);
       }
@@ -230,20 +227,5 @@ class PostService extends ChangeNotifier {
         //   print(e);
       }
     }
-  }
-
-  Future<void> initPlatformState() async {
-    _setPath();
-  }
-
-  void _setPath() async {
-    Directory _path = await getApplicationDocumentsDirectory();
-    String _localPath = _path.path + Platform.pathSeparator + 'Download';
-    final savedDir = Directory(_localPath);
-    bool hasExisted = await savedDir.exists();
-    if (!hasExisted) {
-      savedDir.create();
-    }
-    path = _localPath;
   }
 }

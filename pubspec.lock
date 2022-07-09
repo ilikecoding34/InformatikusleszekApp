@@ -99,18 +99,18 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.6.1"
-  flowder:
-    dependency: "direct main"
-    description:
-      name: flowder
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.0"
   flutter:
     dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_file_downloader:
+    dependency: "direct main"
+    description:
+      name: flutter_file_downloader
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.0+1"
   flutter_lints:
     dependency: "direct dev"
     description:

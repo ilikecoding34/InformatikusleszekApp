@@ -27,7 +27,7 @@ class TagsChip extends StatelessWidget {
                         : Colors.white),
               ),
             )),
-        for (var item in post.taglist)
+        for (var item in post.getAllTags)
           post.tagFilterList.contains(item.name)
               ? const SizedBox.shrink()
               : UnselectedChips(post: post, tagname: item.name),

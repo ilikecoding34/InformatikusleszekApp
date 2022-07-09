@@ -88,7 +88,7 @@ class _PostListContainerState extends State<PostListContainer> {
                         postitem: postitem,
                         openitem: () {
                           Provider.of<PostService>(context, listen: false)
-                              .collapse = true;
+                              .setCollapse = true;
                           Provider.of<PostService>(context, listen: false)
                               .setIsloading = true;
                           Navigator.push(

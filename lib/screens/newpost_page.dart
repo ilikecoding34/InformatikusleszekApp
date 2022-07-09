@@ -20,8 +20,8 @@ class NewPostPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Provider.of<PostService>(context, listen: false).getallPostnewversion();
-    taglist = Provider.of<PostService>(context, listen: true).taglist;
-    selected = Provider.of<PostService>(context, listen: true).tagselected;
+    taglist = Provider.of<PostService>(context, listen: true).getAllTags;
+    selected = Provider.of<PostService>(context, listen: true).getSelectedTags;
     return Scaffold(
         appBar: AppBar(
           title: const Text('Bejelentkezés'),

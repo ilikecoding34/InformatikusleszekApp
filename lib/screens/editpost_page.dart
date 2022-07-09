@@ -1,5 +1,6 @@
 import 'package:blog/models/post_model.dart';
 import 'package:blog/screens/login_page.dart';
+import 'package:blog/screens/singlepost_page.dart';
 import 'package:blog/services/auth_service.dart';
 import 'package:blog/services/post_service.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,7 @@ class EditPostScreen extends StatelessWidget {
 
   List<dynamic> taglist = [];
 
-  List<int> selected = [];
+  List<int> selectedtags = [];
 
   String? datas;
 
@@ -26,8 +27,9 @@ class EditPostScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     bool authok = Provider.of<AuthService>(context).authenticated;
     PostModel? getpost = Provider.of<PostService>(context).singlepost;
-    taglist = Provider.of<PostService>(context, listen: true).taglist;
-    selected = Provider.of<PostService>(context, listen: true).tagselected;
+    taglist = Provider.of<PostService>(context, listen: true).getAllTags;
+    selectedtags =
+        Provider.of<PostService>(context, listen: true).getSelectedTags;
     return Scaffold(
         appBar: AppBar(
           title: const Text('Szerkesztés'),
@@ -46,7 +48,7 @@ class EditPostScreen extends StatelessWidget {
                         'title': posttitlecontroller.text,
                         'link': postlinkcontroller.text,
                         'content': postbodycontroller.text,
-                        'tags': selected,
+                        'tags': selectedtags,
                         'category': 1
                       };
 
@@ -54,7 +56,13 @@ class EditPostScreen extends StatelessWidget {
                           .modifyPost(datas: postdatas)
                           .then((value) =>
                               Provider.of<PostService>(context, listen: false)
-                                  .getPost(id: value));
+                                  .getPost(id: getpost.id));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                SinglePostScreen(title: getpost.title)),
+                      );
                     },
                     icon: const Icon(Icons.save))
                 : IconButton(
@@ -115,7 +123,7 @@ class EditPostScreen extends StatelessWidget {
                         for (var item in taglist)
                           AnimatedContainer(
                               duration: const Duration(milliseconds: 200),
-                              height: selected.contains(item.id) ? 30 : 40,
+                              height: selectedtags.contains(item.id) ? 30 : 40,
                               child: Padding(
                                   padding: const EdgeInsets.only(right: 10),
                                   child: GestureDetector(
@@ -127,7 +135,7 @@ class EditPostScreen extends StatelessWidget {
                                     },
                                     child: Chip(
                                       backgroundColor:
-                                          selected.contains(item.id)
+                                          selectedtags.contains(item.id)
                                               ? Colors.blue
                                               : Colors.grey,
                                       label: Text(item.name),

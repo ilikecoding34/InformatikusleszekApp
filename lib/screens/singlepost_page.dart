@@ -42,8 +42,8 @@ class SinglePostScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isloggedin = Provider.of<AuthService>(context).authenticated;
     PostModel? getpost = Provider.of<PostService>(context).singlepost;
-    taglist = Provider.of<PostService>(context, listen: true).taglist;
-    selected = Provider.of<PostService>(context, listen: true).tagselected;
+    taglist = Provider.of<PostService>(context, listen: true).getAllTags;
+    selected = Provider.of<PostService>(context, listen: true).getSelectedTags;
     return Scaffold(
         appBar: AppBar(
           title: Text(title),
@@ -78,7 +78,7 @@ class SinglePostScreen extends StatelessWidget {
         ),
         body: Consumer<PostService>(builder: (context, post, child) {
           if (!post.getIsloading) {
-            bool show = Provider.of<PostService>(context).collapse;
+            bool show = Provider.of<PostService>(context).getCollapse;
             double commentheight = 0.0;
             if (getpost?.comments.length != null) {
               commentheight = getpost!.comments.length * 0.12;
