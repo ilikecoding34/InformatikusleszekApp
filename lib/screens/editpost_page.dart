@@ -57,7 +57,7 @@ class EditPostScreen extends StatelessWidget {
                           .then((value) =>
                               Provider.of<PostService>(context, listen: false)
                                   .getPost(id: getpost.id));
-                      Navigator.push(
+                      Navigator.pop(
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
@@ -115,9 +115,8 @@ class EditPostScreen extends StatelessWidget {
                                 },
                                 child: Text(filename)),
                           )
-                        : ElevatedButton(
-                            onPressed: null,
-                            child: const Text('File feltöltés')),
+                        : const ElevatedButton(
+                            onPressed: null, child: Text('File feltöltés')),
                     Wrap(
                       children: [
                         for (var item in taglist)
