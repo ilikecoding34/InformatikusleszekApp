@@ -92,6 +92,7 @@ class PostService extends ChangeNotifier {
       api.response = await api.dio.get(
         '/postsnewversion',
       );
+      filteredposts.clear();
       var _adat = api.response!.data;
       postlist = _adat[0].map((e) => PostModel.fromJson(e)).toList();
       filteredposts = postlist;
@@ -177,7 +178,7 @@ class PostService extends ChangeNotifier {
 
       await FileDownloader.downloadFile(
           url: 'https://informatikusleszek.hu/storage/app/public/$filename',
-          name: "PANDA",
+          name: filename,
           onDownloadCompleted: (val) {
             OpenFile.open(val);
           });

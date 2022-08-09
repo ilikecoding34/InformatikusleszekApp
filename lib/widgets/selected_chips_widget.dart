@@ -17,17 +17,19 @@ class SelectedChips extends StatelessWidget {
         onTap: () {
           post.filterPosts(tagname);
         },
-        child: Chip(
-          onDeleted: () {
-            post.filterPosts(tagname);
-          },
-          label: Text(
-            tagname,
-            style: TextStyle(
-                color: post.tagFilterList.contains(tagname)
-                    ? Colors.blue
-                    : Colors.white),
-          ),
-        ));
+        child: Padding(
+            padding: const EdgeInsets.only(right: 5.0, top: 5.0),
+            child: Chip(
+              onDeleted: () {
+                post.filterPosts(tagname);
+              },
+              label: Text(
+                tagname,
+                style: TextStyle(
+                    color: post.tagFilterList.contains(tagname)
+                        ? Colors.blue
+                        : Colors.white),
+              ),
+            )));
   }
 }

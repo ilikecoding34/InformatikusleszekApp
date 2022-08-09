@@ -1,3 +1,4 @@
+import 'package:any_link_preview/any_link_preview.dart';
 import 'package:blog/models/post_model.dart';
 import 'package:blog/screens/editpost_page.dart';
 import 'package:blog/screens/postlist_page.dart';
@@ -121,6 +122,13 @@ class SinglePostScreen extends StatelessWidget {
                                   child: const Text('Link megnyitása'))),
                           visible: getpost.link != null,
                         ),
+                        AnyLinkPreview(
+                          displayDirection: UIDirection.uiDirectionHorizontal,
+                          link: getpost.link ?? '',
+                          errorBody: 'Show my custom error body',
+                          errorTitle: 'Next one is youtube link, error title',
+                        ),
+                        const SizedBox(height: 25),
                         Container(
                             padding: const EdgeInsets.all(10),
                             child: SelectableText(getpost.body,

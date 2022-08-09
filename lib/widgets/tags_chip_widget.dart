@@ -18,15 +18,17 @@ class TagsChip extends StatelessWidget {
             onTap: () {
               post.filterPosts('all');
             },
-            child: Chip(
-              label: Text(
-                "Mind",
-                style: TextStyle(
-                    color: post.tagFilterList.isEmpty
-                        ? Colors.blue
-                        : Colors.white),
-              ),
-            )),
+            child: Padding(
+                padding: const EdgeInsets.only(right: 5.0, top: 5.0),
+                child: Chip(
+                  label: Text(
+                    "Mind",
+                    style: TextStyle(
+                        color: post.tagFilterList.isEmpty
+                            ? Colors.blue
+                            : Colors.white),
+                  ),
+                ))),
         for (var item in post.getAllTags)
           post.tagFilterList.contains(item.name)
               ? const SizedBox.shrink()
