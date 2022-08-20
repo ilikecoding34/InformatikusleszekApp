@@ -32,6 +32,12 @@ class _PostListContainerState extends State<PostListContainer> {
     } else {
       isScrolled = false;
     }
+    if (controller.offset >= controller.position.maxScrollExtent &&
+        !controller.position.outOfRange &&
+        !post.getShowAll) {
+      post.setPostLoading(true);
+      post.loadMorePosts();
+    }
   }
 
   @override
@@ -75,6 +81,13 @@ class _PostListContainerState extends State<PostListContainer> {
                 {post.setRefreshing = false, post.refreshMovement()},
             child: Stack(
               children: [
+                post.getIsloading
+                    ? Container(
+                        height: 200,
+                        width: 200,
+                        color: Colors.black,
+                      )
+                    : SizedBox.shrink(),
                 ListView.separated(
                     separatorBuilder: (context, index) => const Divider(
                           color: Colors.black,

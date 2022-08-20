@@ -16,8 +16,10 @@ class PostService extends ChangeNotifier {
   bool _isLoading = false;
   bool _refreshing = false;
   bool _refresdone = false;
+  bool _showAll = false;
   double calculatedswipe = 0.0;
   double begin = 0.0;
+  int maxPostNumber = 10;
   double end = 0.0;
   List<String> tagFilterList = [];
   List<int> _tagselected = [];
@@ -50,6 +52,9 @@ class PostService extends ChangeNotifier {
   get getSelectedTags => _tagselected;
   get getAllTags => _taglist;
 
+  get getShowAll => _showAll;
+  set setShowAll(bool val) => _showAll = val;
+
   void changecollapse() {
     _collapse = !_collapse;
     notifyListeners();
@@ -69,8 +74,27 @@ class PostService extends ChangeNotifier {
     notifyListeners();
   }
 
+  setPostLoading(bool value) {
+    setIsloading = value;
+    notifyListeners();
+  }
+
   void setToModify() {
     _postedit = true;
+    notifyListeners();
+  }
+
+  loadMorePosts() {
+    filteredposts.clear();
+
+    if ((maxPostNumber + 10) <= postlist.length) {
+      maxPostNumber = maxPostNumber + 10;
+      filteredposts = postlist.sublist(0, maxPostNumber);
+    } else {
+      filteredposts = postlist;
+      setShowAll = true;
+    }
+    setPostLoading(false);
     notifyListeners();
   }
 
@@ -92,14 +116,19 @@ class PostService extends ChangeNotifier {
       api.response = await api.dio.get(
         '/postsnewversion',
       );
+      maxPostNumber = 10;
+      setShowAll = false;
       filteredposts.clear();
+      postlist.clear();
       var _adat = api.response!.data;
       postlist = _adat[0].map((e) => PostModel.fromJson(e)).toList();
-      filteredposts = postlist;
+      filteredposts = postlist.sublist(0, maxPostNumber);
       _taglistoriginal = _adat[1].map((e) => TagModel.fromJson(e)).toList();
+      /*
       _taglistoriginal.sort((a, b) {
         return a.name.toLowerCase().compareTo(b.name.toLowerCase());
       });
+      */
       _taglist = _taglistoriginal;
       notifyListeners();
     } catch (e) {
