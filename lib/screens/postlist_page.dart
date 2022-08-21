@@ -116,8 +116,8 @@ class _PostListScreenState extends State<PostListScreen> {
                         child: Text('Nincs eredmény'),
                       ),
                 post.getShowAll
-                    ? Text('Minden bejegyzés megjeleníve')
-                    : SizedBox.shrink(),
+                    ? const Text('Minden bejegyzés megjelenítve')
+                    : const SizedBox.shrink(),
               ],
             );
           } else {

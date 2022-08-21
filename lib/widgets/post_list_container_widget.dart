@@ -81,13 +81,6 @@ class _PostListContainerState extends State<PostListContainer> {
                 {post.setRefreshing = false, post.refreshMovement()},
             child: Stack(
               children: [
-                post.getIsloading
-                    ? Container(
-                        height: 200,
-                        width: 200,
-                        color: Colors.black,
-                      )
-                    : SizedBox.shrink(),
                 ListView.separated(
                     separatorBuilder: (context, index) => const Divider(
                           color: Colors.black,
@@ -129,6 +122,14 @@ class _PostListContainerState extends State<PostListContainer> {
                     ),
                   ),
                 ),
+                post.getIsloading
+                    ? const Center(
+                        child: SizedBox(
+                        width: 50,
+                        height: 50,
+                        child: CircularProgressIndicator(),
+                      ))
+                    : const SizedBox.shrink(),
               ],
             )));
   }

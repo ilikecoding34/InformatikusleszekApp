@@ -142,13 +142,13 @@ class PostService extends ChangeNotifier {
   }
 
   filterPosts(String name) {
-    if (name != 'all') {
+    if (name != 'Mind') {
       tagFilterList.contains(name)
           ? tagFilterList.remove(name)
           : tagFilterList.add(name);
     }
     List<dynamic> filteringposts = [];
-    if (name == 'all' || tagFilterList.isEmpty) {
+    if (name == 'Mind' || tagFilterList.isEmpty) {
       tagFilterList.clear();
       filteredposts = postlist;
     } else {

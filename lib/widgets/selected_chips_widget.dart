@@ -6,10 +6,12 @@ class SelectedChips extends StatelessWidget {
     Key? key,
     required this.post,
     required this.tagname,
+    required this.selected,
   }) : super(key: key);
 
   final PostService post;
   final String tagname;
+  final bool selected;
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +22,7 @@ class SelectedChips extends StatelessWidget {
         child: Padding(
             padding: const EdgeInsets.only(right: 5.0, top: 5.0),
             child: Chip(
-              onDeleted: () {
-                post.filterPosts(tagname);
-              },
+              onDeleted: selected ? () => post.filterPosts(tagname) : null,
               label: Text(
                 tagname,
                 style: TextStyle(
