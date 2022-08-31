@@ -26,11 +26,18 @@ class _PostListContainerState extends State<PostListContainer> {
     } else {
       isTop = false;
     }
-    if (!(controller.offset <= controller.position.minScrollExtent &&
-        !controller.position.outOfRange)) {
-      isScrolled = true;
+    if (!(controller.offset <= (controller.position.minScrollExtent))) {
+      if (!isScrolled) {
+        setState(() {
+          isScrolled = true;
+        });
+      }
     } else {
-      isScrolled = false;
+      if (isScrolled) {
+        setState(() {
+          isScrolled = false;
+        });
+      }
     }
     if (controller.offset >= controller.position.maxScrollExtent &&
         !controller.position.outOfRange &&
@@ -38,6 +45,35 @@ class _PostListContainerState extends State<PostListContainer> {
       post.setPostLoading(true);
       post.loadMorePosts();
     }
+  }
+
+  void startRefresh(PointerDownEvent detail) {
+    if (!post.getRefreshing && (isTop)) {
+      post.begin = detail.position.dy.floorToDouble();
+      post.setRefreshing = true;
+    }
+  }
+
+  void onRefreshing(PointerMoveEvent detail) {
+    if (post.getRefreshing) {
+      post.end = detail.position.dy.floorToDouble();
+      post.refreshMovement();
+    }
+    if (post.getRefresdone) {
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      post.setRefresdone = false;
+    }
+  }
+
+  toSinglePage(PostModel postitem) {
+    Provider.of<PostService>(context, listen: false).setCollapse = true;
+    Provider.of<PostService>(context, listen: false).setIsloading = true;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => SinglePostScreen(title: postitem.title)),
+    );
+    Provider.of<PostService>(context, listen: false).getPost(id: postitem.id);
   }
 
   @override
@@ -58,25 +94,8 @@ class _PostListContainerState extends State<PostListContainer> {
   Widget build(BuildContext context) {
     return Expanded(
         child: Listener(
-            onPointerDown: (PointerDownEvent detail) => {
-                  if (!post.getRefreshing && (isTop))
-                    {
-                      post.begin = detail.position.dy.floorToDouble(),
-                      post.setRefreshing = true,
-                    },
-                },
-            onPointerMove: (PointerMoveEvent detail) => {
-                  if (post.getRefreshing)
-                    {
-                      post.end = detail.position.dy.floorToDouble(),
-                      post.refreshMovement()
-                    },
-                  if (post.getRefresdone)
-                    {
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar),
-                      post.setRefresdone = false,
-                    },
-                },
+            onPointerDown: (PointerDownEvent detail) => {startRefresh(detail)},
+            onPointerMove: (PointerMoveEvent detail) => {onRefreshing(detail)},
             onPointerUp: (value) =>
                 {post.setRefreshing = false, post.refreshMovement()},
             child: Stack(
@@ -93,18 +112,7 @@ class _PostListContainerState extends State<PostListContainer> {
                       return PostListItem(
                         postitem: postitem,
                         openitem: () {
-                          Provider.of<PostService>(context, listen: false)
-                              .setCollapse = true;
-                          Provider.of<PostService>(context, listen: false)
-                              .setIsloading = true;
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    SinglePostScreen(title: postitem.title)),
-                          );
-                          Provider.of<PostService>(context, listen: false)
-                              .getPost(id: postitem.id);
+                          toSinglePage(postitem);
                         },
                       );
                     }),

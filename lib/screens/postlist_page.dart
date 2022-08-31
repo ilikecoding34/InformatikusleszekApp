@@ -53,8 +53,8 @@ class _PostListScreenState extends State<PostListScreen> {
     final themeNotifier = Provider.of<ThemeService>(context);
     bool isloggedin =
         Provider.of<AuthService>(context, listen: true).authenticated;
-    double screenwidth = MediaQuery.of(context).size.width;
-    int numberOfLines = (screenwidth / 17).floor();
+    Size size = MediaQuery.of(context).size;
+    int numberOfLines = (size.width / 17).floor();
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -83,6 +83,10 @@ class _PostListScreenState extends State<PostListScreen> {
                   );
                 },
                 icon: const Icon(Icons.playlist_add_outlined)),
+            visible: isloggedin,
+          ),
+          Visibility(
+            child: const IconButton(onPressed: null, icon: Icon(Icons.logout)),
             replacement: IconButton(
                 onPressed: () {
                   Navigator.push(

@@ -11,6 +11,7 @@ class PostListItemBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -19,14 +20,14 @@ class PostListItemBody extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-                width: MediaQuery.of(context).size.width * 0.6,
+                width: size.width * 0.5,
                 child: Text(postitem.title,
                     style: const TextStyle(
                       fontSize: 20.0,
                     ))),
             Container(
               padding: const EdgeInsets.only(top: 5.0),
-              width: MediaQuery.of(context).size.width * 0.6,
+              width: size.width * 0.5,
               child: Wrap(
                 runSpacing: 5.0,
                 spacing: 5.0,
@@ -40,7 +41,13 @@ class PostListItemBody extends StatelessWidget {
             )
           ],
         ),
-        Text(postitem.user!.name),
+        Column(
+          children: [
+            Text(postitem.user!.name),
+            const SizedBox(height: 10),
+            Text(postitem.created.substring(0, 10)),
+          ],
+        )
       ],
     );
   }

@@ -12,9 +12,10 @@ class PostModel {
   FileModel? file;
   List<TagModel> tags;
   List<CommentModel> comments;
+  String created;
 
   PostModel(this.id, this.title, this.link, this.body, this.user, this.tags,
-      this.comments);
+      this.comments, this.created);
 
   PostModel.fromJson(json)
       : id = json['id'],
@@ -30,5 +31,6 @@ class PostModel {
         comments = json["comments"] == null
             ? <CommentModel>[]
             : List<CommentModel>.from(
-                json["comments"].map((x) => CommentModel.fromJson(x))).toList();
+                json["comments"].map((x) => CommentModel.fromJson(x))).toList(),
+        created = json["created_at"];
 }
