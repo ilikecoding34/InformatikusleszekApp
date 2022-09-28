@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class PostListContainer extends StatefulWidget {
-  PostListContainer({Key? key, required this.post}) : super(key: key);
+  const PostListContainer({Key? key, required this.post}) : super(key: key);
   final PostService post;
 
   @override
@@ -18,6 +18,7 @@ class _PostListContainerState extends State<PostListContainer> {
   late PostService post;
   bool isTop = true;
   bool isScrolled = false;
+  bool _snackbarIsActive = false;
 
   _scrollListener() {
     if (controller.offset <= controller.position.minScrollExtent &&
@@ -44,6 +45,13 @@ class _PostListContainerState extends State<PostListContainer> {
         !post.getShowAll) {
       post.setPostLoading(true);
       post.loadMorePosts();
+      if (!_snackbarIsActive) {
+        _snackbarIsActive = true;
+        ScaffoldMessenger.of(context)
+            .showSnackBar(snackbarLoadDone)
+            .closed
+            .then((value) => _snackbarIsActive = false);
+      }
     }
   }
 
@@ -60,7 +68,7 @@ class _PostListContainerState extends State<PostListContainer> {
       post.refreshMovement();
     }
     if (post.getRefresdone) {
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      ScaffoldMessenger.of(context).showSnackBar(snackbarRefreshDone);
       post.setRefresdone = false;
     }
   }
@@ -85,9 +93,14 @@ class _PostListContainerState extends State<PostListContainer> {
     super.initState();
   }
 
-  final snackBar = const SnackBar(
+  final snackbarRefreshDone = const SnackBar(
     behavior: SnackBarBehavior.floating,
     content: Text('Frissítés megtörtént'),
+  );
+
+  final snackbarLoadDone = const SnackBar(
+    behavior: SnackBarBehavior.floating,
+    content: Text('Betöltve'),
   );
 
   @override

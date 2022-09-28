@@ -21,17 +21,7 @@ class PostListItem extends StatelessWidget {
             BoxShadow(
                 color: Colors.black26, offset: Offset(0, 4), blurRadius: 5.0)
           ],
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            stops: const [0.2, 0.7, 1.0],
-            colors: [
-              Colors.green,
-              Colors.lightBlue,
-              Colors.cyan.shade200,
-            ],
-          ),
-          color: Colors.deepPurple.shade300,
+          color: Colors.green,
           borderRadius: BorderRadius.circular(20),
         ),
         child: ElevatedButton(

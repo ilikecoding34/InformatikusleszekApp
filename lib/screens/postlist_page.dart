@@ -39,6 +39,11 @@ class _PostListScreenState extends State<PostListScreen> {
         : null;
   }
 
+  final snackbarLogoutDone = const SnackBar(
+    behavior: SnackBarBehavior.floating,
+    content: Text('Kiléptél'),
+  );
+
   @override
   void initState() {
     // TODO: implement initState
@@ -75,6 +80,8 @@ class _PostListScreenState extends State<PostListScreen> {
           Visibility(
             child: IconButton(
                 onPressed: () {
+                  Provider.of<PostService>(context, listen: false)
+                      .clearTagFilterList();
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -86,7 +93,14 @@ class _PostListScreenState extends State<PostListScreen> {
             visible: isloggedin,
           ),
           Visibility(
-            child: const IconButton(onPressed: null, icon: Icon(Icons.logout)),
+            child: IconButton(
+                onPressed: () {
+                  Provider.of<AuthService>(context, listen: false)
+                      .logout()
+                      .then((value) => ScaffoldMessenger.of(context)
+                          .showSnackBar(snackbarLogoutDone));
+                },
+                icon: const Icon(Icons.logout)),
             replacement: IconButton(
                 onPressed: () {
                   Navigator.push(

@@ -1,5 +1,6 @@
 import 'package:blog/config/ui_config.dart';
 import 'package:blog/services/post_service.dart';
+import 'package:blog/widgets/tags_chip_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,16 +16,13 @@ class NewPostPage extends StatelessWidget {
 
   List<dynamic> taglist = [];
 
-  List<int> selected = [];
-
   @override
   Widget build(BuildContext context) {
     Provider.of<PostService>(context, listen: false).getallPostnewversion();
     taglist = Provider.of<PostService>(context, listen: true).getAllTags;
-    selected = Provider.of<PostService>(context, listen: true).getSelectedTags;
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Bejelentkezés'),
+          title: const Text('Új bejegyzés'),
         ),
         body: SingleChildScrollView(
             reverse: true,
@@ -81,28 +79,8 @@ class NewPostPage extends StatelessWidget {
                             borderRadius: BorderRadius.circular(15),
                           )),
                     )),
-                Wrap(
-                  children: [
-                    for (var item in taglist)
-                      AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          height: selected.contains(item.id) ? 30 : 40,
-                          child: Padding(
-                              padding: const EdgeInsets.only(right: 10),
-                              child: GestureDetector(
-                                onTap: () {
-                                  Provider.of<PostService>(context,
-                                          listen: false)
-                                      .tagsSelection(item.id);
-                                },
-                                child: Chip(
-                                  backgroundColor: selected.contains(item.id)
-                                      ? Colors.blue
-                                      : Colors.grey,
-                                  label: Text(item.name),
-                                ),
-                              )))
-                  ],
+                TagsChip(
+                  post: Provider.of<PostService>(context, listen: false),
                 ),
                 Container(
                     padding: const EdgeInsets.all(10),
@@ -124,7 +102,7 @@ class NewPostPage extends StatelessWidget {
                           'title': title.text,
                           'link': link.text,
                           'content': body.text,
-                          'tags': selected,
+                          'tags': taglist,
                           'category': 1
                         };
                         await Provider.of<PostService>(context, listen: false)

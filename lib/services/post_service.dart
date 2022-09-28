@@ -22,7 +22,7 @@ class PostService extends ChangeNotifier {
   int maxPostNumber = 10;
   double end = 0.0;
   List<String> tagFilterList = [];
-  List<int> _tagselected = [];
+  final List<int> _tagselected = [];
   List<dynamic> postlist = [];
   List<dynamic> _taglist = [];
   List<dynamic> _taglistoriginal = [];
@@ -84,7 +84,12 @@ class PostService extends ChangeNotifier {
     notifyListeners();
   }
 
-  loadMorePosts() {
+  void clearTagFilterList() {
+    tagFilterList.clear();
+    notifyListeners();
+  }
+
+  Future loadMorePosts() async {
     filteredposts.clear();
 
     if ((maxPostNumber + 10) <= postlist.length) {
@@ -192,11 +197,6 @@ class PostService extends ChangeNotifier {
 
   Future getfile({required int id}) async {
     String? token = await shared.readToken();
-    var tempDir = await getExternalStorageDirectory();
-    String tempPath = tempDir!.path;
-
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    String appDocPath = appDocDir.path;
 
     try {
       api.response = await api.dio.get(

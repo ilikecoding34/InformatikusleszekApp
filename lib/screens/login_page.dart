@@ -33,6 +33,18 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  final snackbarLoginDone = const SnackBar(
+    duration: Duration(milliseconds: 500),
+    behavior: SnackBarBehavior.floating,
+    content: Text('Sikeres belépés'),
+  );
+
+  final snackbarLoginFail = const SnackBar(
+    duration: Duration(seconds: 2),
+    behavior: SnackBarBehavior.floating,
+    content: Text('Belépés sikertelen'),
+  );
+
   @override
   Widget build(BuildContext context) {
     bool reg = Provider.of<AuthService>(context, listen: true).bregistration;
@@ -248,8 +260,23 @@ class _LoginScreenState extends State<LoginScreen> {
                                   await Provider.of<AuthService>(context,
                                           listen: false)
                                       .login(creds: creds)
-                                      .then(
-                                          (value) => {Navigator.pop(context)});
+                                      .then((value) => {
+                                            if (value != null || value == true)
+                                              {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                        snackbarLoginDone)
+                                                    .closed
+                                                    .then((value) =>
+                                                        Navigator.pop(context))
+                                              }
+                                            else
+                                              {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                        snackbarLoginFail)
+                                              }
+                                          });
                                 },
                                 child: loggedin
                                     ? const Text('Belépve')

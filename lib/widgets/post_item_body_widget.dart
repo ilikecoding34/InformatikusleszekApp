@@ -11,7 +11,7 @@ class PostListItemBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    double screenwith = MediaQuery.of(context).size.width * 0.5;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -20,14 +20,14 @@ class PostListItemBody extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-                width: size.width * 0.5,
+                width: screenwith,
                 child: Text(postitem.title,
                     style: const TextStyle(
                       fontSize: 20.0,
                     ))),
             Container(
               padding: const EdgeInsets.only(top: 5.0),
-              width: size.width * 0.5,
+              width: screenwith,
               child: Wrap(
                 runSpacing: 5.0,
                 spacing: 5.0,

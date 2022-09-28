@@ -96,7 +96,7 @@ class SinglePostScreen extends StatelessWidget {
             ),
             body: Stack(
               children: [
-                CirclesBackground(),
+                //   CirclesBackground(),
                 Consumer<PostService>(builder: (context, post, child) {
                   if (!post.getIsloading) {
                     bool show = Provider.of<PostService>(context).getCollapse;

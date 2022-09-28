@@ -53,7 +53,9 @@ class AuthService extends ChangeNotifier {
       if (token != null) {
         _isloggedin = true;
       }
+
       notifyListeners();
+      return _isloggedin;
     } catch (e) {
       notifyListeners();
     }
@@ -106,5 +108,11 @@ class AuthService extends ChangeNotifier {
     } catch (e) {
       notifyListeners();
     }
+  }
+
+  Future logout() async {
+    await shared.logout();
+    _isloggedin = false;
+    notifyListeners();
   }
 }
