@@ -2,6 +2,7 @@ import 'package:blog/services/auth_service.dart';
 import 'package:blog/services/post_service.dart';
 import 'package:blog/services/sharedpreferences_service.dart';
 import 'package:blog/services/theme_service.dart';
+import 'package:blog/widgets/appbar_widget.dart';
 import 'package:blog/widgets/post_list_container_widget.dart';
 import 'package:blog/widgets/refresh_widget.dart';
 import 'package:blog/widgets/tags_chip_widget.dart';
@@ -39,11 +40,6 @@ class _PostListScreenState extends State<PostListScreen> {
         : null;
   }
 
-  final snackbarLogoutDone = const SnackBar(
-    behavior: SnackBarBehavior.floating,
-    content: Text('Kiléptél'),
-  );
-
   @override
   void initState() {
     // TODO: implement initState
@@ -55,64 +51,13 @@ class _PostListScreenState extends State<PostListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeNotifier = Provider.of<ThemeService>(context);
-    bool isloggedin =
-        Provider.of<AuthService>(context, listen: true).authenticated;
     Size size = MediaQuery.of(context).size;
     int numberOfLines = (size.width / 17).floor();
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text('Bejegyzések'),
-        actions: [
-          Container(
-            alignment: Alignment.center,
-            child: const Text('Mode:'),
-          ),
-          IconButton(
-              onPressed: () {
-                bool value = !themeNotifier.getMode();
-                themeNotifier.changeMode(value);
-              },
-              icon: themeNotifier.getMode()
-                  ? const Icon(Icons.dark_mode)
-                  : const Icon(Icons.light_mode)),
-          Visibility(
-            child: IconButton(
-                onPressed: () {
-                  Provider.of<PostService>(context, listen: false)
-                      .clearTagFilterList();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            NewPostPage(pagetitle: 'Új bejegyzés')),
-                  );
-                },
-                icon: const Icon(Icons.playlist_add_outlined)),
-            visible: isloggedin,
-          ),
-          Visibility(
-            child: IconButton(
-                onPressed: () {
-                  Provider.of<AuthService>(context, listen: false)
-                      .logout()
-                      .then((value) => ScaffoldMessenger.of(context)
-                          .showSnackBar(snackbarLogoutDone));
-                },
-                icon: const Icon(Icons.logout)),
-            replacement: IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const LoginScreen()),
-                  );
-                },
-                icon: const Icon(Icons.login)),
-            visible: isloggedin,
-          ),
-        ],
+        actions: const [AppBarActions()],
       ),
       body: Consumer<PostService>(
         builder: (context, post, child) {
