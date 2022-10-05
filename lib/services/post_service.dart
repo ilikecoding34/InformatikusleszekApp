@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:blog/config/http_config.dart';
 import 'package:blog/models/post_model.dart';
 import 'package:blog/models/tag_model.dart';
@@ -8,7 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
 
 class PostService extends ChangeNotifier {
   bool _collapse = false;
@@ -161,13 +159,14 @@ class PostService extends ChangeNotifier {
         return a.toLowerCase().compareTo(b.toLowerCase());
       });
       for (int i = 0; i < postlist.length; i++) {
-        List posttagarray = [];
+        List postTagArray = [];
         if (postlist[i].tags != null) {
           if (postlist[i].tags.length > 0) {
             for (var tag in postlist[i].tags) {
-              posttagarray.add(tag.name);
+              postTagArray.add(tag.name);
+              tagsSelection(tag.id);
             }
-            if (Set.of(posttagarray).containsAll(tagFilterList)) {
+            if (Set.of(postTagArray).containsAll(tagFilterList)) {
               filteringposts.add(postlist[i]);
             }
           }
@@ -247,14 +246,17 @@ class PostService extends ChangeNotifier {
       return;
     } else {
       try {
+        print(datas);
         api.response = await api.dio.post(
           '/newpost',
           options: Options(headers: {'Authorization': 'Bearer $token'}),
           data: datas,
         );
+
         notifyListeners();
+        return api.response?.data;
       } catch (e) {
-        //   print(e);
+        print(e);
       }
     }
   }

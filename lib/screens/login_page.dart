@@ -3,6 +3,7 @@ import 'package:blog/screens/verification_page.dart';
 import 'package:blog/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:validators/validators.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -223,6 +224,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                     'name': _name.text,
                                     'password': _password.text,
                                   };
+
+                                  if (!isEmail(_email.text)) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        behavior: SnackBarBehavior.floating,
+                                        content: Text('Rossz emailcím'),
+                                      ),
+                                    );
+                                    return;
+                                  }
 
                                   await Provider.of<AuthService>(context,
                                           listen: false)

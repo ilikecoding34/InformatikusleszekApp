@@ -121,13 +121,17 @@ class _PostListContainerState extends State<PostListContainer> {
                     controller: controller,
                     itemCount: post.filteredposts.length,
                     itemBuilder: (BuildContext context, int index) {
-                      PostModel postitem = post.filteredposts[index];
-                      return PostListItem(
-                        postitem: postitem,
-                        openitem: () {
-                          toSinglePage(postitem);
-                        },
-                      );
+                      if (mounted) {
+                        PostModel postitem = post.filteredposts[index];
+                        return PostListItem(
+                          postitem: postitem,
+                          openitem: () {
+                            toSinglePage(postitem);
+                          },
+                        );
+                      } else {
+                        return Container();
+                      }
                     }),
                 AnimatedContainer(
                   duration: Duration(milliseconds: isScrolled ? 200 : 0),
