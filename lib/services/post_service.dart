@@ -23,7 +23,6 @@ class PostService extends ChangeNotifier {
   final List<int> _tagselected = [];
   List<dynamic> postlist = [];
   List<dynamic> _taglist = [];
-  List<dynamic> _taglistoriginal = [];
   List<dynamic> filteredposts = [];
   PostModel? singlepost;
 
@@ -101,19 +100,6 @@ class PostService extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future getallPost() async {
-    try {
-      api.response = await api.dio.get(
-        '/posts',
-      );
-      var _adat = api.response!.data;
-      postlist = _adat.map((e) => PostModel.fromJson(e)).toList();
-      notifyListeners();
-    } catch (e) {
-      print(e);
-    }
-  }
-
   Future getallPostnewversion() async {
     try {
       api.response = await api.dio.get(
@@ -126,13 +112,8 @@ class PostService extends ChangeNotifier {
       var _adat = api.response!.data;
       postlist = _adat[0].map((e) => PostModel.fromJson(e)).toList();
       filteredposts = postlist.sublist(0, maxPostNumber);
-      _taglistoriginal = _adat[1].map((e) => TagModel.fromJson(e)).toList();
-      /*
-      _taglistoriginal.sort((a, b) {
-        return a.name.toLowerCase().compareTo(b.name.toLowerCase());
-      });
-      */
-      _taglist = _taglistoriginal;
+      _taglist = _adat[1].map((e) => TagModel.fromJson(e)).toList();
+
       notifyListeners();
     } catch (e) {
       // print(e);
@@ -141,7 +122,7 @@ class PostService extends ChangeNotifier {
 
   tagsSelection(int id) {
     _tagselected.contains(id) ? _tagselected.remove(id) : _tagselected.add(id);
-    notifyListeners();
+    // notifyListeners();
   }
 
   filterPosts(String name) {
@@ -211,9 +192,6 @@ class PostService extends ChangeNotifier {
             OpenFile.open(val);
           });
 
-      /*
-      await OpenFile.open(
-          'https://informatikusleszek.hu/storage/app/public/$filename');*/
       notifyListeners();
     } catch (e) {
       // print(e);
@@ -246,17 +224,15 @@ class PostService extends ChangeNotifier {
       return;
     } else {
       try {
-        print(datas);
         api.response = await api.dio.post(
           '/newpost',
           options: Options(headers: {'Authorization': 'Bearer $token'}),
           data: datas,
         );
-
         notifyListeners();
         return api.response?.data;
       } catch (e) {
-        print(e);
+        //   print(e);
       }
     }
   }

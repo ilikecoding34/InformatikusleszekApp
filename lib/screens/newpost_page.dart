@@ -1,5 +1,6 @@
 import 'package:blog/config/ui_config.dart';
 import 'package:blog/services/post_service.dart';
+import 'package:blog/widgets/input_widget.dart';
 import 'package:blog/widgets/tags_chip_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -38,72 +39,16 @@ class NewPostPage extends StatelessWidget {
             reverse: true,
             child: Column(
               children: [
-                Container(
-                    padding: const EdgeInsets.all(10),
-                    child: TextField(
-                      controller: title,
-                      decoration: InputDecoration(
-                          labelText: 'Cím',
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                const BorderSide(width: 3, color: Colors.blue),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                const BorderSide(width: 3, color: Colors.lime),
-                            borderRadius: BorderRadius.circular(15),
-                          )),
-                    )),
-                Container(
-                    padding: const EdgeInsets.all(10),
-                    child: TextField(
-                      controller: link,
-                      decoration: InputDecoration(
-                          labelText: 'Url - opcionális',
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                const BorderSide(width: 3, color: Colors.blue),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                const BorderSide(width: 3, color: Colors.lime),
-                            borderRadius: BorderRadius.circular(15),
-                          )),
-                    )),
-                Container(
-                    padding: const EdgeInsets.all(10),
-                    child: TextField(
-                      controller: body,
-                      decoration: InputDecoration(
-                          labelText: 'Tartalom',
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                const BorderSide(width: 3, color: Colors.blue),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                const BorderSide(width: 3, color: Colors.lime),
-                            borderRadius: BorderRadius.circular(15),
-                          )),
-                    )),
+                InputFieldWidget(title: 'Cím', controller: title),
+                InputFieldWidget(title: 'Url - opcionális', controller: link),
+                InputFieldWidget(title: 'Tartalom', controller: body),
                 TagsChip(
                   post: Provider.of<PostService>(context, listen: false),
                 ),
                 Container(
                     padding: const EdgeInsets.all(10),
                     child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          primary: Colors.cyan,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 20),
-                          textStyle: const TextStyle(
-                              fontSize: 30, fontWeight: FontWeight.bold)),
+                      style: UIconfig.buttonStyle,
                       child: const Text('Új bejegyzés',
                           style: TextStyle(fontSize: UIconfig.mySize)),
                       onPressed: () async {

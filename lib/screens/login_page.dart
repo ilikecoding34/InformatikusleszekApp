@@ -1,6 +1,7 @@
 import 'package:blog/config/ui_config.dart';
 import 'package:blog/screens/verification_page.dart';
 import 'package:blog/services/auth_service.dart';
+import 'package:blog/widgets/input_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:validators/validators.dart';
@@ -71,16 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Padding(
                     padding: const EdgeInsets.all(10),
                     child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            primary: reg ? Colors.cyan : Colors.lightGreen,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 5, vertical: 10),
-                            textStyle: const TextStyle(
-                                fontSize: UIconfig.mySize,
-                                fontWeight: FontWeight.bold)),
+                        style: UIconfig.buttonStyle,
                         onPressed: () => {
                               Provider.of<AuthService>(context, listen: false)
                                   .changeToLogin(),
@@ -144,45 +136,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                   .verificationsent,
                         ),
                         Visibility(
-                          child: Padding(
-                              padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
-                              child: TextField(
-                                controller: _name,
-                                decoration: InputDecoration(
-                                    labelText: 'Név',
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          width: 3, color: Colors.blue),
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          width: 3, color: Colors.lime),
-                                      borderRadius: BorderRadius.circular(15),
-                                    )),
-                              )),
+                          child:
+                              InputFieldWidget(title: 'Név', controller: _name),
                           visible: !loggedin && namevisible,
                         ),
                         Visibility(
-                          child: Padding(
-                              padding:
-                                  const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                              child: TextField(
-                                controller: _email,
-                                keyboardType: TextInputType.emailAddress,
-                                decoration: InputDecoration(
-                                    labelText: 'Email',
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          width: 3, color: Colors.blue),
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          width: 3, color: Colors.lime),
-                                      borderRadius: BorderRadius.circular(15),
-                                    )),
-                              )),
+                          child: InputFieldWidget(
+                              title: 'Email', controller: _email),
                           visible: !loggedin,
                         ),
                         Visibility(
@@ -253,16 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         style: TextStyle(
                                             fontSize: UIconfig.mySize)))
                             : ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    primary: Colors.cyan,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30.0),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 10),
-                                    textStyle: const TextStyle(
-                                        fontSize: 30,
-                                        fontWeight: FontWeight.bold)),
+                                style: UIconfig.buttonStyle,
                                 onPressed: () async {
                                   Map creds = {
                                     'email': _email.text,

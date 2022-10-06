@@ -39,15 +39,7 @@ class NewComment extends StatelessWidget {
       Container(
           padding: const EdgeInsets.all(10),
           child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  primary: Colors.cyan,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  textStyle: const TextStyle(
-                      fontSize: 30, fontWeight: FontWeight.bold)),
+              style: UIconfig.buttonStyle,
               onPressed: () async {
                 Map datas = {
                   'userid': 1,

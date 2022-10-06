@@ -52,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
               child: ElevatedButton(
                   onPressed: () async {
                     await Provider.of<PostService>(context, listen: false)
-                        .getallPost();
+                        .getallPostnewversion();
                     Navigator.push(
                       context,
                       MaterialPageRoute(

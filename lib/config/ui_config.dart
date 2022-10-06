@@ -18,4 +18,12 @@ class UIconfig {
   static ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
   );
+
+  static ButtonStyle buttonStyle = ElevatedButton.styleFrom(
+      primary: Colors.cyan,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30.0),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      textStyle: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold));
 }
