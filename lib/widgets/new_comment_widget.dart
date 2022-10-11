@@ -2,6 +2,7 @@ import 'package:blog/config/ui_config.dart';
 import 'package:blog/models/post_model.dart';
 import 'package:blog/services/comment_service.dart';
 import 'package:blog/services/post_service.dart';
+import 'package:blog/services/sharedpreferences_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +18,7 @@ class NewComment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    PreferencesService shareddatas = PreferencesService();
     return Column(children: [
       Container(
           padding: const EdgeInsets.all(10),
@@ -39,10 +41,10 @@ class NewComment extends StatelessWidget {
       Container(
           padding: const EdgeInsets.all(10),
           child: ElevatedButton(
-              style: UIconfig.buttonStyle,
+              style: UIconfig.buttonBasicStyle,
               onPressed: () async {
                 Map datas = {
-                  'userid': 1,
+                  'userid': await shareddatas.readUserId(),
                   'content': newcommentcontroller.text,
                   'postid': getpost.id,
                 };

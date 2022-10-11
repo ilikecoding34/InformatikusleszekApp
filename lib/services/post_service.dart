@@ -15,6 +15,7 @@ class PostService extends ChangeNotifier {
   bool _refreshing = false;
   bool _refresdone = false;
   bool _showAll = false;
+  bool _isStoreSuccess = false;
   double calculatedswipe = 0.0;
   double begin = 0.0;
   int maxPostNumber = 10;
@@ -52,6 +53,8 @@ class PostService extends ChangeNotifier {
   get getShowAll => _showAll;
   set setShowAll(bool val) => _showAll = val;
 
+  get isStoreSuccess => _isStoreSuccess;
+
   void changecollapse() {
     _collapse = !_collapse;
     notifyListeners();
@@ -76,6 +79,11 @@ class PostService extends ChangeNotifier {
     notifyListeners();
   }
 
+  setStoreSuccess(bool val) {
+    _isStoreSuccess = val;
+    notifyListeners();
+  }
+
   void setToModify() {
     _postedit = true;
     notifyListeners();
@@ -83,6 +91,7 @@ class PostService extends ChangeNotifier {
 
   void clearTagFilterList() {
     tagFilterList.clear();
+    filteredposts = postlist;
     notifyListeners();
   }
 
@@ -122,10 +131,11 @@ class PostService extends ChangeNotifier {
 
   tagsSelection(int id) {
     _tagselected.contains(id) ? _tagselected.remove(id) : _tagselected.add(id);
-    // notifyListeners();
+    notifyListeners();
   }
 
-  filterPosts(String name) {
+  filterPosts(String name, int id) {
+    tagsSelection(id);
     if (name != 'Mind') {
       tagFilterList.contains(name)
           ? tagFilterList.remove(name)
@@ -145,7 +155,6 @@ class PostService extends ChangeNotifier {
           if (postlist[i].tags.length > 0) {
             for (var tag in postlist[i].tags) {
               postTagArray.add(tag.name);
-              tagsSelection(tag.id);
             }
             if (Set.of(postTagArray).containsAll(tagFilterList)) {
               filteringposts.add(postlist[i]);
@@ -229,6 +238,7 @@ class PostService extends ChangeNotifier {
           options: Options(headers: {'Authorization': 'Bearer $token'}),
           data: datas,
         );
+        _isStoreSuccess = true;
         notifyListeners();
         return api.response?.data;
       } catch (e) {

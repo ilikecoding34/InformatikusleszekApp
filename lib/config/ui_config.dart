@@ -19,7 +19,7 @@ class UIconfig {
     brightness: Brightness.light,
   );
 
-  static ButtonStyle buttonStyle = ElevatedButton.styleFrom(
+  static ButtonStyle buttonBasicStyle = ElevatedButton.styleFrom(
       primary: Colors.cyan,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30.0),

@@ -3,6 +3,8 @@ import 'package:blog/screens/login_page.dart';
 import 'package:blog/screens/singlepost_page.dart';
 import 'package:blog/services/auth_service.dart';
 import 'package:blog/services/post_service.dart';
+import 'package:blog/services/sharedpreferences_service.dart';
+import 'package:blog/widgets/input_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -17,7 +19,11 @@ class EditPostScreen extends StatelessWidget {
 
   List<dynamic> taglist = [];
 
+  PostService? postService;
+
   List<int> selectedtags = [];
+
+  PreferencesService shareddatas = PreferencesService();
 
   String? datas;
 
@@ -25,11 +31,11 @@ class EditPostScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    postService = Provider.of<PostService>(context, listen: false);
     bool authok = Provider.of<AuthService>(context).authenticated;
-    PostModel? getpost = Provider.of<PostService>(context).singlepost;
-    taglist = Provider.of<PostService>(context, listen: true).getAllTags;
-    selectedtags =
-        Provider.of<PostService>(context, listen: true).getSelectedTags;
+    PostModel? getpost = postService?.singlepost;
+    taglist = postService?.getAllTags;
+    selectedtags = postService?.getSelectedTags;
     return Scaffold(
         appBar: AppBar(
           title: const Text('Szerkesztés'),
@@ -44,7 +50,7 @@ class EditPostScreen extends StatelessWidget {
                     onPressed: () async {
                       postdatas = {
                         'id': getpost!.id,
-                        'userid': 1,
+                        'userid': await shareddatas.readUserId(),
                         'title': posttitlecontroller.text,
                         'link': postlinkcontroller.text,
                         'content': postbodycontroller.text,
@@ -89,21 +95,13 @@ class EditPostScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Container(
-                        padding: const EdgeInsets.all(10),
-                        child: TextField(
-                          controller: posttitlecontroller,
-                        )),
-                    Container(
-                        padding: const EdgeInsets.all(10),
-                        child: TextField(
-                          controller: postlinkcontroller,
-                        )),
-                    Container(
-                        padding: const EdgeInsets.all(10),
-                        child: TextField(
-                          controller: postbodycontroller,
-                        )),
+                    InputFieldWidget(
+                        title: 'Cím', controller: posttitlecontroller),
+                    InputFieldWidget(
+                        title: 'Url - opcionális',
+                        controller: postlinkcontroller),
+                    InputFieldWidget(
+                        title: 'Tartalom', controller: postbodycontroller),
                     getpost.file != null
                         ? Padding(
                             padding: const EdgeInsets.only(top: 10, bottom: 10),

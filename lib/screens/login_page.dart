@@ -72,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Padding(
                     padding: const EdgeInsets.all(10),
                     child: ElevatedButton(
-                        style: UIconfig.buttonStyle,
+                        style: UIconfig.buttonBasicStyle,
                         onPressed: () => {
                               Provider.of<AuthService>(context, listen: false)
                                   .changeToLogin(),
@@ -213,7 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         style: TextStyle(
                                             fontSize: UIconfig.mySize)))
                             : ElevatedButton(
-                                style: UIconfig.buttonStyle,
+                                style: UIconfig.buttonBasicStyle,
                                 onPressed: () async {
                                   Map creds = {
                                     'email': _email.text,

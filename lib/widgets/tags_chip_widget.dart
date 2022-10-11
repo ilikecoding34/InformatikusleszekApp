@@ -1,3 +1,4 @@
+import 'package:blog/models/tag_model.dart';
 import 'package:blog/services/post_service.dart';
 import 'package:blog/widgets/selected_chips_widget.dart';
 import 'package:flutter/material.dart';
@@ -13,14 +14,14 @@ class TagsChip extends StatelessWidget {
       children: [
         SelectedChips(
           post: post,
-          tagname: 'Mind',
+          tag: TagModel(id: 0, name: 'Mind'),
           selected: false,
         ),
         ...post.getAllTags.map(
           (tag) {
             return SelectedChips(
               post: post,
-              tagname: tag.name,
+              tag: tag,
               selected: post.tagFilterList.contains(tag.name) ? true : false,
             );
           },
