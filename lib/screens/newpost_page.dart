@@ -52,10 +52,10 @@ class NewPostPage extends StatelessWidget {
             });
   }
 
-  failedPostSave(BuildContext context) {
+  failedSave(BuildContext context, String inputttext) {
     ScaffoldMessenger.of(context)
         .showSnackBar(
-          messageSnackBar("Hiba történt a mentés közben"),
+          messageSnackBar(inputttext),
         )
         .closed
         .then((value) {
@@ -112,21 +112,18 @@ class NewPostPage extends StatelessWidget {
                               'tags': taglist,
                               'category': 1
                             };
-/*
+
                             if (!isURL(link.text)) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                messageSnackBar("Hibás link"),
-                              );
-                              return;
+                              failedSave(context, 'Hibás link');
                             }
-*/
-                            print(datas);
-                            return;
-                            await postService?.storePost(datas: datas).then(
-                                (value) => {
+
+                            await postService
+                                ?.storePost(datas: datas)
+                                .then((value) => {
                                       value != null
                                           ? backToMainScreen(context, value)
-                                          : failedPostSave(context)
+                                          : failedSave(context,
+                                              'Hiba történt a mentés közben')
                                     });
                           },
                         ))

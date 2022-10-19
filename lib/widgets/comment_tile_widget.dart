@@ -1,8 +1,9 @@
 import 'package:blog/models/comment_model.dart';
 import 'package:blog/models/post_model.dart';
 import 'package:blog/services/comment_service.dart';
-import 'package:blog/widgets/delete_comment_widget.dart';
-import 'package:blog/widgets/modify_comment_widget.dart';
+import 'package:blog/services/post_service.dart';
+import 'package:blog/services/sharedpreferences_service.dart';
+import 'package:blog/widgets/comment_icon_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,11 +23,31 @@ class CommentTile extends StatelessWidget {
   final PostModel getpost;
   final List<TextEditingController> commentcontroller;
 
+  Future changeActionButton(BuildContext context) async {
+    Provider.of<CommentService>(context, listen: false).changecomment(index);
+    commentcontroller[index].text = commentlist[index].body.toString();
+  }
+
   @override
   Widget build(BuildContext context) {
-    bool isCommentEdit = Provider.of<CommentService>(context).commentedit;
-    bool edittile = isCommentEdit &&
-        Provider.of<CommentService>(context).commentchangeid == index;
+    CommentService comment = Provider.of<CommentService>(context);
+    bool isCommentEdit = comment.commentedit;
+    bool edittile = isCommentEdit && comment.commentchangeid == index;
+    Map datas = {
+      'commentid': commentlist[index].id,
+      'userid': commentlist[index].userId,
+      'postid': commentlist[index].postId
+    };
+    Future deleteAction = Provider.of<CommentService>(context, listen: false)
+        .deleteComment(datas: datas)
+        .then((value) => Provider.of<PostService>(context, listen: false)
+            .getPost(id: value));
+
+    Future modifyAction = Provider.of<CommentService>(context, listen: false)
+        .modifyComment(datas: datas)
+        .then((value) => Provider.of<PostService>(context, listen: false)
+            .getPost(id: value));
+    Future changeAction = changeActionButton(context);
     return Container(
       decoration: BoxDecoration(
         color: edittile ? Colors.blueGrey : Colors.grey,
@@ -64,27 +85,15 @@ class CommentTile extends StatelessWidget {
                   style: const TextStyle(fontSize: 15.0),
                   textAlign: TextAlign.center,
                 )),
-          isloggedin
-              ? DeleteComment(commentlist: commentlist, index: index)
-              : Container(),
-          isloggedin
-              ? isCommentEdit &&
-                      Provider.of<CommentService>(context).commentchangeid ==
-                          index
-                  ? ModifyComment(
-                      commentlist: commentlist,
-                      commentcontroller: commentcontroller,
-                      getpost: getpost,
-                      index: index)
-                  : IconButton(
-                      icon: const Icon(Icons.edit),
-                      onPressed: () {
-                        Provider.of<CommentService>(context, listen: false)
-                            .changecomment(index);
-                        commentcontroller[index].text =
-                            commentlist[index].body.toString();
-                      })
-              : Container()
+          if (isloggedin) ...[
+            CommentIconButton(
+                icon: Icons.delete, datas: datas, action: deleteAction),
+            isCommentEdit && comment.commentchangeid == index
+                ? CommentIconButton(
+                    icon: Icons.save, datas: datas, action: modifyAction)
+                : CommentIconButton(icon: Icons.edit, action: changeAction)
+          ] else
+            const SizedBox.shrink(),
         ],
       ),
     );

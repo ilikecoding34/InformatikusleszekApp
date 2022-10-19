@@ -5,9 +5,10 @@ import 'package:blog/screens/postlist_page.dart';
 import 'package:blog/services/auth_service.dart';
 import 'package:blog/services/comment_service.dart';
 import 'package:blog/services/post_service.dart';
+import 'package:blog/services/sharedpreferences_service.dart';
 import 'package:blog/widgets/circle_widget.dart';
-import 'package:blog/widgets/circles_background_widget.dart';
-import 'package:blog/widgets/comment_tile_widget.dart';
+import 'package:blog/widgets/comment_list_body.dart';
+import 'package:blog/widgets/comment_list.dart';
 import 'package:blog/widgets/new_comment_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -44,10 +45,26 @@ class SinglePostScreen extends StatelessWidget {
     )) throw 'Could not launch';
   }
 
+  PreferencesService shareddatas = PreferencesService();
+
+  Future getUserid() async {
+    return await shareddatas.readUserId();
+  }
+
+  Future newCommentAction(BuildContext context, Map datas) async {
+    CommentService comment =
+        Provider.of<CommentService>(context, listen: false);
+    PostService post = Provider.of<PostService>(context, listen: false);
+    comment
+        .storeComment(datas: datas)
+        .then((value) => {post.getPost(id: value)});
+    newcommentcontroller.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isloggedin = Provider.of<AuthService>(context).authenticated;
-    PostModel? getpost = Provider.of<PostService>(context).singlepost;
+    PostModel? getPostModel = Provider.of<PostService>(context).singlepost;
     taglist = Provider.of<PostService>(context, listen: true).getAllTags;
     selected = Provider.of<PostService>(context, listen: true).getSelectedTags;
     return WillPopScope(
@@ -98,19 +115,24 @@ class SinglePostScreen extends StatelessWidget {
               children: [
                 //   CirclesBackground(),
                 Consumer<PostService>(builder: (context, post, child) {
+                  Map datas = {
+                    'userid': getUserid,
+                    'content': newcommentcontroller.text,
+                    'postid': getPostModel?.id,
+                  };
                   if (!post.getIsloading) {
-                    bool show = Provider.of<PostService>(context).getCollapse;
+                    bool show = post.getCollapse;
                     double commentheight = 0.0;
-                    if (getpost?.comments.length != null) {
-                      commentheight = getpost!.comments.length * 0.12;
+                    if (getPostModel?.comments.length != null) {
+                      commentheight = getPostModel!.comments.length * 0.12;
                     }
                     if (commentheight > 0.5) {
                       commentheight > 0.5;
                     }
 
-                    String? filename = getpost!.file == null
+                    String? filename = getPostModel!.file == null
                         ? 'Nincs fájl feltöltve'
-                        : getpost.file?.name;
+                        : getPostModel.file?.name;
                     return SingleChildScrollView(
                         reverse: true,
                         child: Column(
@@ -118,16 +140,16 @@ class SinglePostScreen extends StatelessWidget {
                           children: [
                             Container(
                                 padding: const EdgeInsets.all(10),
-                                child: Text(getpost.title,
+                                child: Text(getPostModel.title,
                                     style: const TextStyle(fontSize: 30.0))),
                             Visibility(
                               child: Container(
                                   padding: const EdgeInsets.all(10),
                                   child: ElevatedButton(
                                       onPressed: () =>
-                                          _launchURL(getpost.link ?? ''),
+                                          _launchURL(getPostModel.link ?? ''),
                                       child: const Text('Link megnyitása'))),
-                              visible: getpost.link != null,
+                              visible: getPostModel.link != null,
                             ),
                             Padding(
                                 padding:
@@ -135,7 +157,7 @@ class SinglePostScreen extends StatelessWidget {
                                 child: AnyLinkPreview(
                                   displayDirection:
                                       UIDirection.uiDirectionHorizontal,
-                                  link: getpost.link ?? '',
+                                  link: getPostModel.link ?? '',
                                   errorBody: 'Show my custom error body',
                                   errorTitle:
                                       'Next one is youtube link, error title',
@@ -143,9 +165,9 @@ class SinglePostScreen extends StatelessWidget {
                             const SizedBox(height: 25),
                             Container(
                                 padding: const EdgeInsets.all(10),
-                                child: SelectableText(getpost.body,
+                                child: SelectableText(getPostModel.body,
                                     style: const TextStyle(fontSize: 20.0))),
-                            getpost.file != null
+                            getPostModel.file != null
                                 ? Padding(
                                     padding: const EdgeInsets.only(
                                         top: 10, bottom: 10),
@@ -153,72 +175,33 @@ class SinglePostScreen extends StatelessWidget {
                                         onPressed: () {
                                           Provider.of<PostService>(context,
                                                   listen: false)
-                                              .getfile(id: getpost.file!.id!);
+                                              .getfile(
+                                                  id: getPostModel.file!.id!);
                                         },
                                         child: Text(filename!)),
                                   )
-                                : Container(),
+                                : const SizedBox.shrink(),
                             Wrap(children: [
-                              ...getpost.tags.map((tag) => Padding(
+                              ...getPostModel.tags.map((tag) => Padding(
                                     padding: const EdgeInsets.only(right: 10),
                                     child: Chip(label: Text(tag.name)),
                                   ))
                             ]),
-                            getpost.comments.isNotEmpty
-                                ? Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                          padding: const EdgeInsets.all(10),
-                                          child: const Text('Kommentek:',
-                                              style:
-                                                  TextStyle(fontSize: 15.0))),
-                                      ElevatedButton(
-                                          onPressed: () =>
-                                              Provider.of<PostService>(context,
-                                                      listen: false)
-                                                  .changecollapse(),
-                                          child: show
-                                              ? const Text('Kinyit')
-                                              : const Text('Összecsuk'))
-                                    ],
-                                  )
-                                : Container(),
-                            getpost.comments.isNotEmpty
-                                ? AnimatedContainer(
-                                    duration: const Duration(seconds: 1),
-                                    height: show
-                                        ? 0
-                                        : (MediaQuery.of(context).size.height *
-                                            commentheight),
-                                    child: ListView.separated(
-                                        separatorBuilder: (context, index) =>
-                                            const Divider(
-                                              color: Colors.black,
-                                            ),
-                                        padding: const EdgeInsets.all(8),
-                                        shrinkWrap: true,
-                                        primary: false,
-                                        itemCount: getpost.comments.length,
-                                        itemBuilder:
-                                            (BuildContext context, int index) {
-                                          TextEditingController comedit =
-                                              TextEditingController();
-                                          commentcontroller.add(comedit);
-                                          return CommentTile(
-                                              commentlist: getpost.comments,
-                                              commentcontroller:
-                                                  commentcontroller,
-                                              getpost: getpost,
-                                              index: index,
-                                              isloggedin: isloggedin);
-                                        }))
-                                : Container(),
+                            getPostModel.comments.isNotEmpty
+                                ? CommentListBody(
+                                    show: show,
+                                    commentheight: commentheight,
+                                    getpost: getPostModel,
+                                    commentcontroller: commentcontroller,
+                                    isloggedin: isloggedin)
+                                : const SizedBox.shrink(),
                             isloggedin
                                 ? NewComment(
                                     newcommentcontroller: newcommentcontroller,
-                                    getpost: getpost)
-                                : Container()
+                                    getpost: getPostModel,
+                                    action: newCommentAction(context, datas),
+                                  )
+                                : const SizedBox.shrink()
                           ],
                         ));
                   } else {
