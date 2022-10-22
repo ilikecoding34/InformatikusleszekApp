@@ -2,16 +2,14 @@ import 'package:blog/models/comment_model.dart';
 import 'package:blog/models/post_model.dart';
 import 'package:blog/services/comment_service.dart';
 import 'package:blog/services/post_service.dart';
-import 'package:blog/services/sharedpreferences_service.dart';
 import 'package:blog/widgets/comment_icon_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CommentTile extends StatelessWidget {
-  const CommentTile(
+  CommentTile(
       {Key? key,
       required this.commentlist,
-      required this.commentcontroller,
       required this.getpost,
       required this.index,
       required this.isloggedin})
@@ -21,12 +19,8 @@ class CommentTile extends StatelessWidget {
   final List<CommentModel> commentlist;
   final bool isloggedin;
   final PostModel getpost;
-  final List<TextEditingController> commentcontroller;
 
-  Future changeActionButton(BuildContext context) async {
-    Provider.of<CommentService>(context, listen: false).changecomment(index);
-    commentcontroller[index].text = commentlist[index].body.toString();
-  }
+  TextEditingController commentcontroller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -34,20 +28,15 @@ class CommentTile extends StatelessWidget {
     bool isCommentEdit = comment.commentedit;
     bool edittile = isCommentEdit && comment.commentchangeid == index;
     Map datas = {
-      'commentid': commentlist[index].id,
+      'id': commentlist[index].id,
       'userid': commentlist[index].userId,
       'postid': commentlist[index].postId
     };
-    Future deleteAction = Provider.of<CommentService>(context, listen: false)
-        .deleteComment(datas: datas)
-        .then((value) => Provider.of<PostService>(context, listen: false)
-            .getPost(id: value));
 
-    Future modifyAction = Provider.of<CommentService>(context, listen: false)
-        .modifyComment(datas: datas)
-        .then((value) => Provider.of<PostService>(context, listen: false)
-            .getPost(id: value));
-    Future changeAction = changeActionButton(context);
+    if (edittile) {
+      commentcontroller.text = commentlist[index].body!;
+    }
+
     return Container(
       decoration: BoxDecoration(
         color: edittile ? Colors.blueGrey : Colors.grey,
@@ -77,7 +66,10 @@ class CommentTile extends StatelessWidget {
                             const BorderSide(width: 3, color: Colors.lime),
                         borderRadius: BorderRadius.circular(15),
                       )),
-                  controller: commentcontroller[index],
+                  controller: commentcontroller,
+                  onChanged: (val) {
+                    datas['content'] = val;
+                  },
                 ))
               : Flexible(
                   child: Text(
@@ -86,12 +78,15 @@ class CommentTile extends StatelessWidget {
                   textAlign: TextAlign.center,
                 )),
           if (isloggedin) ...[
-            CommentIconButton(
-                icon: Icons.delete, datas: datas, action: deleteAction),
+            CommentIconButton(icon: Icons.delete, datas: datas, type: 'delete'),
             isCommentEdit && comment.commentchangeid == index
                 ? CommentIconButton(
-                    icon: Icons.save, datas: datas, action: modifyAction)
-                : CommentIconButton(icon: Icons.edit, action: changeAction)
+                    icon: Icons.save, datas: datas, type: 'modify')
+                : CommentIconButton(
+                    icon: Icons.edit,
+                    type: 'change',
+                    index: index,
+                  )
           ] else
             const SizedBox.shrink(),
         ],

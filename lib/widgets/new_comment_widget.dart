@@ -2,22 +2,19 @@ import 'package:blog/config/ui_config.dart';
 import 'package:blog/models/post_model.dart';
 import 'package:blog/services/comment_service.dart';
 import 'package:blog/services/post_service.dart';
-import 'package:blog/services/sharedpreferences_service.dart';
 import 'package:blog/widgets/input_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class NewComment extends StatelessWidget {
-  const NewComment({
+  NewComment({
     Key? key,
-    required this.newcommentcontroller,
     required this.getpost,
-    required this.action,
   }) : super(key: key);
 
-  final TextEditingController newcommentcontroller;
   final PostModel getpost;
-  final Future action;
+
+  TextEditingController newcommentcontroller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +29,18 @@ class NewComment extends StatelessWidget {
           child: ElevatedButton(
               style: UIconfig.buttonBasicStyle,
               onPressed: () async {
-                action;
+                Map datas = {
+                  'content': newcommentcontroller.text,
+                  'postid': getpost.id,
+                };
+                CommentService comment =
+                    Provider.of<CommentService>(context, listen: false);
+                PostService post =
+                    Provider.of<PostService>(context, listen: false);
+                comment
+                    .storeComment(datas: datas)
+                    .then((value) => {post.getPost(id: value)});
+                newcommentcontroller.clear();
               },
               child: const Text('Hozzászólás mentése',
                   style: TextStyle(fontSize: UIconfig.mySize))))

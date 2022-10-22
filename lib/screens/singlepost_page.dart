@@ -23,7 +23,6 @@ class SinglePostScreen extends StatelessWidget {
   TextEditingController posttitlecontroller = TextEditingController();
   TextEditingController postbodycontroller = TextEditingController();
   TextEditingController postlinkcontroller = TextEditingController();
-  TextEditingController newcommentcontroller = TextEditingController();
   List<TextEditingController> commentcontroller = [];
 
   List<dynamic> taglist = [];
@@ -45,28 +44,13 @@ class SinglePostScreen extends StatelessWidget {
     )) throw 'Could not launch';
   }
 
-  PreferencesService shareddatas = PreferencesService();
-
-  Future getUserid() async {
-    return await shareddatas.readUserId();
-  }
-
-  Future newCommentAction(BuildContext context, Map datas) async {
-    CommentService comment =
-        Provider.of<CommentService>(context, listen: false);
-    PostService post = Provider.of<PostService>(context, listen: false);
-    comment
-        .storeComment(datas: datas)
-        .then((value) => {post.getPost(id: value)});
-    newcommentcontroller.clear();
-  }
-
   @override
   Widget build(BuildContext context) {
     bool isloggedin = Provider.of<AuthService>(context).authenticated;
     PostModel? getPostModel = Provider.of<PostService>(context).singlepost;
     taglist = Provider.of<PostService>(context, listen: true).getAllTags;
     selected = Provider.of<PostService>(context, listen: true).getSelectedTags;
+
     return WillPopScope(
         onWillPop: () async {
           await Provider.of<PostService>(context, listen: false)
@@ -115,11 +99,6 @@ class SinglePostScreen extends StatelessWidget {
               children: [
                 //   CirclesBackground(),
                 Consumer<PostService>(builder: (context, post, child) {
-                  Map datas = {
-                    'userid': getUserid,
-                    'content': newcommentcontroller.text,
-                    'postid': getPostModel?.id,
-                  };
                   if (!post.getIsloading) {
                     bool show = post.getCollapse;
                     double commentheight = 0.0;
@@ -192,14 +171,11 @@ class SinglePostScreen extends StatelessWidget {
                                     show: show,
                                     commentheight: commentheight,
                                     getpost: getPostModel,
-                                    commentcontroller: commentcontroller,
                                     isloggedin: isloggedin)
                                 : const SizedBox.shrink(),
                             isloggedin
                                 ? NewComment(
-                                    newcommentcontroller: newcommentcontroller,
                                     getpost: getPostModel,
-                                    action: newCommentAction(context, datas),
                                   )
                                 : const SizedBox.shrink()
                           ],

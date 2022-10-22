@@ -9,14 +9,12 @@ class CommentListBody extends StatelessWidget {
     required this.show,
     required this.commentheight,
     required this.getpost,
-    required this.commentcontroller,
     required this.isloggedin,
   }) : super(key: key);
 
   final bool show;
   final double commentheight;
   final PostModel getpost;
-  final List<TextEditingController> commentcontroller;
   final bool isloggedin;
 
   @override
@@ -27,7 +25,6 @@ class CommentListBody extends StatelessWidget {
             show: show,
             commentheight: commentheight,
             getpost: getpost,
-            commentcontroller: commentcontroller,
             isloggedin: isloggedin),
         CommentShow(show: show)
       ],

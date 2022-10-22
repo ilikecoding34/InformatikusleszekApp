@@ -1,10 +1,9 @@
 import 'package:blog/config/http_config.dart';
 import 'package:blog/models/post_model.dart';
+import 'package:blog/services/sharedpreferences_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class CommentService extends ChangeNotifier {
   bool collapse = false;
@@ -14,18 +13,7 @@ class CommentService extends ChangeNotifier {
   bool commentedit = false;
   final HttpConfig api = HttpConfig();
 
-  final storage = FlutterSecureStorage();
-  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  String? token;
-
-  Future readToken() async {
-    SharedPreferences prefs = await _prefs;
-    if (kIsWeb) {
-      token = prefs.getString('token');
-    } else {
-      token = await storage.read(key: "token");
-    }
-  }
+  PreferencesService shareddatas = PreferencesService();
 
   void changecomment(int index) {
     commentedit = !commentedit;
@@ -34,7 +22,8 @@ class CommentService extends ChangeNotifier {
   }
 
   Future storeComment({required Map datas}) async {
-    await readToken();
+    String? token = await shareddatas.readToken();
+    datas['userid'] = await shareddatas.readUserId();
     if (token == null) {
       return;
     } else {
@@ -53,7 +42,7 @@ class CommentService extends ChangeNotifier {
   }
 
   Future modifyComment({required Map datas}) async {
-    await readToken();
+    String? token = await shareddatas.readToken();
     if (token == null) {
       return;
     } else {
@@ -73,7 +62,7 @@ class CommentService extends ChangeNotifier {
   }
 
   Future deleteComment({required Map datas}) async {
-    await readToken();
+    String? token = await shareddatas.readToken();
     if (token == null) {
       return;
     } else {

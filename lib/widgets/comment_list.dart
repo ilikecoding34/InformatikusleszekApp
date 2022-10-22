@@ -8,14 +8,12 @@ class CommentList extends StatelessWidget {
     required this.show,
     required this.commentheight,
     required this.getpost,
-    required this.commentcontroller,
     required this.isloggedin,
   }) : super(key: key);
 
   final bool show;
   final double commentheight;
   final PostModel getpost;
-  final List<TextEditingController> commentcontroller;
   final bool isloggedin;
 
   @override
@@ -32,11 +30,8 @@ class CommentList extends StatelessWidget {
             primary: false,
             itemCount: getpost.comments.length,
             itemBuilder: (BuildContext context, int index) {
-              TextEditingController comedit = TextEditingController();
-              commentcontroller.add(comedit);
               return CommentTile(
                   commentlist: getpost.comments,
-                  commentcontroller: commentcontroller,
                   getpost: getpost,
                   index: index,
                   isloggedin: isloggedin);
