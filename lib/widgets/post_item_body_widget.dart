@@ -46,6 +46,8 @@ class PostListItemBody extends StatelessWidget {
             Text(postitem.user!.name),
             const SizedBox(height: 10),
             Text(postitem.created.substring(0, 10)),
+            const SizedBox(height: 10),
+            Text('Megtekintés: ${postitem.view}'),
           ],
         )
       ],

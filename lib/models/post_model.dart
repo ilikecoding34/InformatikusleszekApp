@@ -8,20 +8,22 @@ class PostModel {
   String title;
   String? link;
   String body;
+  int view;
   UserModel? user;
   FileModel? file;
   List<TagModel> tags;
   List<CommentModel> comments;
   String created;
 
-  PostModel(this.id, this.title, this.link, this.body, this.user, this.tags,
-      this.comments, this.created);
+  PostModel(this.id, this.title, this.link, this.body, this.view, this.user,
+      this.tags, this.comments, this.created);
 
   PostModel.fromJson(json)
       : id = json['id'],
         title = json['title'],
         link = json['link'],
         body = json['body'],
+        view = json['view'],
         user = UserModel.fromJson(json['user']),
         file = json["file"] == null ? null : FileModel.fromJson(json['file']),
         tags = json["tags"] == null

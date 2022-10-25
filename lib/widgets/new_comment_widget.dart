@@ -16,6 +16,20 @@ class NewComment extends StatelessWidget {
 
   TextEditingController newcommentcontroller = TextEditingController();
 
+  storeComment(BuildContext context) {
+    Map datas = {
+      'content': newcommentcontroller.text,
+      'postid': getpost.id,
+    };
+    CommentService comment =
+        Provider.of<CommentService>(context, listen: false);
+    PostService post = Provider.of<PostService>(context, listen: false);
+    comment
+        .storeComment(datas: datas)
+        .then((value) => {post.getPost(id: value)});
+    newcommentcontroller.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(children: [
@@ -28,20 +42,7 @@ class NewComment extends StatelessWidget {
           padding: const EdgeInsets.all(10),
           child: ElevatedButton(
               style: UIconfig.buttonBasicStyle,
-              onPressed: () async {
-                Map datas = {
-                  'content': newcommentcontroller.text,
-                  'postid': getpost.id,
-                };
-                CommentService comment =
-                    Provider.of<CommentService>(context, listen: false);
-                PostService post =
-                    Provider.of<PostService>(context, listen: false);
-                comment
-                    .storeComment(datas: datas)
-                    .then((value) => {post.getPost(id: value)});
-                newcommentcontroller.clear();
-              },
+              onPressed: storeComment(context),
               child: const Text('Hozzászólás mentése',
                   style: TextStyle(fontSize: UIconfig.mySize))))
     ]);

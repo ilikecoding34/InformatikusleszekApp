@@ -100,7 +100,6 @@ class SinglePostScreen extends StatelessWidget {
                 //   CirclesBackground(),
                 Consumer<PostService>(builder: (context, post, child) {
                   if (!post.getIsloading) {
-                    bool show = post.getCollapse;
                     double commentheight = 0.0;
                     if (getPostModel?.comments.length != null) {
                       commentheight = getPostModel!.comments.length * 0.12;
@@ -126,21 +125,24 @@ class SinglePostScreen extends StatelessWidget {
                                   padding: const EdgeInsets.all(10),
                                   child: ElevatedButton(
                                       onPressed: () =>
-                                          _launchURL(getPostModel.link ?? ''),
+                                          _launchURL(getPostModel.link!),
                                       child: const Text('Link megnyitása'))),
                               visible: getPostModel.link != null,
                             ),
-                            Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 10, right: 10),
-                                child: AnyLinkPreview(
-                                  displayDirection:
-                                      UIDirection.uiDirectionHorizontal,
-                                  link: getPostModel.link ?? '',
-                                  errorBody: 'Show my custom error body',
-                                  errorTitle:
-                                      'Next one is youtube link, error title',
-                                )),
+                            Visibility(
+                              child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10, right: 10),
+                                  child: AnyLinkPreview(
+                                    displayDirection:
+                                        UIDirection.uiDirectionHorizontal,
+                                    link: getPostModel.link ?? '',
+                                    errorBody: 'Show my custom error body',
+                                    errorTitle:
+                                        'Next one is youtube link, error title',
+                                  )),
+                              visible: getPostModel.link != null,
+                            ),
                             const SizedBox(height: 25),
                             Container(
                                 padding: const EdgeInsets.all(10),
@@ -167,17 +169,11 @@ class SinglePostScreen extends StatelessWidget {
                                   ))
                             ]),
                             getPostModel.comments.isNotEmpty
-                                ? CommentListBody(
-                                    show: show,
+                                ? CommentBody(
                                     commentheight: commentheight,
                                     getpost: getPostModel,
                                     isloggedin: isloggedin)
                                 : const SizedBox.shrink(),
-                            isloggedin
-                                ? NewComment(
-                                    getpost: getPostModel,
-                                  )
-                                : const SizedBox.shrink()
                           ],
                         ));
                   } else {

@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
 
 class InputFieldWidget extends StatelessWidget {
-  const InputFieldWidget({
-    Key? key,
-    required this.controller,
-    required this.title,
-  }) : super(key: key);
+  InputFieldWidget(
+      {Key? key,
+      required this.controller,
+      required this.title,
+      this.enable = true})
+      : super(key: key);
 
   final TextEditingController controller;
   final String title;
+  final bool enable;
 
   @override
   Widget build(BuildContext context) {
     return Container(
         padding: const EdgeInsets.all(10),
         child: TextField(
+          maxLines: null,
+          enabled: enable,
           controller: controller,
           decoration: InputDecoration(
               labelText: title,

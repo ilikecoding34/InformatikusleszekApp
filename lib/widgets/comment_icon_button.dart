@@ -39,7 +39,7 @@ class CommentIconButton extends StatelessWidget {
               break;
             case 'change':
               Provider.of<CommentService>(context, listen: false)
-                  .changecomment(index!);
+                  .changecomment();
 
               break;
             default:

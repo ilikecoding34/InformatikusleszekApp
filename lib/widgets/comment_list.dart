@@ -1,9 +1,9 @@
 import 'package:blog/models/post_model.dart';
-import 'package:blog/widgets/comment_tile_widget.dart';
+import 'package:blog/widgets/comment_line.dart';
 import 'package:flutter/material.dart';
 
 class CommentList extends StatelessWidget {
-  const CommentList({
+  CommentList({
     Key? key,
     required this.show,
     required this.commentheight,
@@ -21,20 +21,12 @@ class CommentList extends StatelessWidget {
     return AnimatedContainer(
         duration: const Duration(seconds: 1),
         height: show ? 0 : (MediaQuery.of(context).size.height * commentheight),
-        child: ListView.separated(
-            separatorBuilder: (context, index) => const Divider(
-                  color: Colors.black,
-                ),
-            padding: const EdgeInsets.all(8),
-            shrinkWrap: true,
-            primary: false,
-            itemCount: getpost.comments.length,
-            itemBuilder: (BuildContext context, int index) {
-              return CommentTile(
-                  commentlist: getpost.comments,
-                  getpost: getpost,
-                  index: index,
-                  isloggedin: isloggedin);
-            }));
+        child: SingleChildScrollView(
+          child: Column(children: [
+            ...getpost.comments.map((element) {
+              return CommentTile(comment: element, isloggedin: isloggedin);
+            })
+          ]),
+        ));
   }
 }

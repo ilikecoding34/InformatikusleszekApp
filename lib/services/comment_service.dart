@@ -15,9 +15,8 @@ class CommentService extends ChangeNotifier {
 
   PreferencesService shareddatas = PreferencesService();
 
-  void changecomment(int index) {
+  void changecomment() {
     commentedit = !commentedit;
-    commentchangeid = index;
     notifyListeners();
   }
 
