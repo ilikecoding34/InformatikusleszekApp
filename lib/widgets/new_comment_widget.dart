@@ -16,6 +16,13 @@ class NewComment extends StatelessWidget {
 
   TextEditingController newcommentcontroller = TextEditingController();
 
+  messageSnackBar(String content) {
+    return SnackBar(
+      behavior: SnackBarBehavior.floating,
+      content: Text(content),
+    );
+  }
+
   storeComment(BuildContext context) {
     Map datas = {
       'content': newcommentcontroller.text,
@@ -24,9 +31,11 @@ class NewComment extends StatelessWidget {
     CommentService comment =
         Provider.of<CommentService>(context, listen: false);
     PostService post = Provider.of<PostService>(context, listen: false);
-    comment
-        .storeComment(datas: datas)
-        .then((value) => {post.getPost(id: value)});
+    comment.storeComment(datas: datas).then((value) {
+      post.getPost(id: value);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(messageSnackBar("Komment elmentve"));
+    });
     newcommentcontroller.clear();
   }
 
@@ -42,7 +51,7 @@ class NewComment extends StatelessWidget {
           padding: const EdgeInsets.all(10),
           child: ElevatedButton(
               style: UIconfig.buttonBasicStyle,
-              onPressed: storeComment(context),
+              onPressed: () => storeComment(context),
               child: const Text('Hozzászólás mentése',
                   style: TextStyle(fontSize: UIconfig.mySize))))
     ]);

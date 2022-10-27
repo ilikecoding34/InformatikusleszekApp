@@ -62,6 +62,7 @@ class CommentService extends ChangeNotifier {
 
   Future deleteComment({required Map datas}) async {
     String? token = await shareddatas.readToken();
+    datas['userid'] = await shareddatas.readUserId();
     if (token == null) {
       return;
     } else {

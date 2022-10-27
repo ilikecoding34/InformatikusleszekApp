@@ -29,9 +29,17 @@ class _CommentState extends State<CommentTile> {
     controller.text = widget.comment.body!;
     datas = {
       'id': widget.comment.id,
+      'commentid': widget.comment.id,
       'userid': widget.comment.userId,
       'postid': widget.comment.postId
     };
+  }
+
+  messageSnackBar(String content) {
+    return SnackBar(
+      behavior: SnackBarBehavior.floating,
+      content: Text(content),
+    );
   }
 
   @override
@@ -55,12 +63,15 @@ class _CommentState extends State<CommentTile> {
                       icon: const Icon(Icons.edit)),
                   IconButton(
                       onPressed: () {
+                        isEdit = false;
                         datas['content'] = controller.text;
                         Provider.of<CommentService>(context, listen: false)
                             .modifyComment(datas: datas)
                             .then((value) =>
                                 Provider.of<PostService>(context, listen: false)
                                     .getPost(id: value));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            messageSnackBar("Mósodítás elmentve"));
                       },
                       icon: const Icon(Icons.save)),
                   IconButton(
@@ -70,6 +81,8 @@ class _CommentState extends State<CommentTile> {
                             .then((value) =>
                                 Provider.of<PostService>(context, listen: false)
                                     .getPost(id: value));
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(messageSnackBar("Komment törölve"));
                       },
                       icon: const Icon(Icons.delete))
                 ],
