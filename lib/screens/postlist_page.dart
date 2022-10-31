@@ -9,9 +9,6 @@ import 'package:blog/widgets/tags_chip_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'login_page.dart';
-import 'newpost_page.dart';
-
 class PostListScreen extends StatefulWidget {
   PostListScreen({Key? key, required this.title}) : super(key: key);
   String title;

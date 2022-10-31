@@ -1,6 +1,7 @@
 import 'package:blog/config/ui_config.dart';
 import 'package:blog/screens/postlist_page.dart';
 import 'package:blog/services/auth_service.dart';
+import 'package:blog/widgets/input_widget.dart';
 import 'package:blog/widgets/number_box.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -46,8 +47,9 @@ class VerificationScreen extends StatelessWidget {
         appBar: AppBar(
           title: const Text('Bejelentkezés'),
         ),
-        body: SingleChildScrollView(
-            child: Column(
+        body: Center(
+            child: SingleChildScrollView(
+                child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Provider.of<AuthService>(context).getVerification
@@ -55,7 +57,7 @@ class VerificationScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(10),
                     child: Container(
                         color: Colors.cyan, child: const Text('Jóváhagyva')))
-                : const Text(''),
+                : const SizedBox.shrink(),
             const Padding(
               padding: EdgeInsets.all(10),
               child: Text('Visszaigazoló email elküldve'),
@@ -63,22 +65,7 @@ class VerificationScreen extends StatelessWidget {
             Visibility(
               child: Padding(
                   padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                  child: TextField(
-                    controller: _email,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                        labelText: 'Email',
-                        enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              const BorderSide(width: 3, color: Colors.blue),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              const BorderSide(width: 3, color: Colors.lime),
-                          borderRadius: BorderRadius.circular(15),
-                        )),
-                  )),
+                  child: InputFieldWidget(controller: _email, title: "Email")),
               visible: lateverification,
             ),
             Padding(
@@ -86,7 +73,7 @@ class VerificationScreen extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  color: Colors.yellow.shade200,
+                  color: Colors.green.shade100,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -118,17 +105,11 @@ class VerificationScreen extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(
+              height: 20,
+            ),
             ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    primary: Colors.cyan,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 50, vertical: 20),
-                    textStyle: const TextStyle(
-                        fontSize: UIconfig.mySize,
-                        fontWeight: FontWeight.bold)),
+                style: UIconfig.buttonBasicStyle,
                 onPressed: () async {
                   code = '';
                   for (var item in controllerArray) {
@@ -142,6 +123,6 @@ class VerificationScreen extends StatelessWidget {
                 },
                 child: const Text('Küldés')),
           ],
-        )));
+        ))));
   }
 }

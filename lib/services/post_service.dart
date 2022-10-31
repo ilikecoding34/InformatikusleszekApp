@@ -129,6 +129,15 @@ class PostService extends ChangeNotifier {
     }
   }
 
+  orderTopViewed(bool original) {
+    if (original) {
+      filteredposts = postlist;
+    } else {
+      postlist.sort();
+    }
+    notifyListeners();
+  }
+
   tagsSelection(int id) {
     _tagselected.contains(id) ? _tagselected.remove(id) : _tagselected.add(id);
     notifyListeners();

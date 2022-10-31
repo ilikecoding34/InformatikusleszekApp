@@ -9,12 +9,10 @@ import 'package:provider/provider.dart';
 class CommentBody extends StatelessWidget {
   const CommentBody({
     Key? key,
-    required this.commentheight,
     required this.getpost,
     required this.isloggedin,
   }) : super(key: key);
 
-  final double commentheight;
   final PostModel getpost;
   final bool isloggedin;
 
@@ -23,11 +21,7 @@ class CommentBody extends StatelessWidget {
     bool show = Provider.of<PostService>(context, listen: true).getCollapse;
     return Column(
       children: [
-        CommentList(
-            show: show,
-            commentheight: commentheight,
-            getpost: getpost,
-            isloggedin: isloggedin),
+        CommentList(show: show, getpost: getpost, isloggedin: isloggedin),
         CommentShow(show: show),
         isloggedin
             ? NewComment(

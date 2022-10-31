@@ -100,14 +100,6 @@ class SinglePostScreen extends StatelessWidget {
                 //   CirclesBackground(),
                 Consumer<PostService>(builder: (context, post, child) {
                   if (!post.getIsloading) {
-                    double commentheight = 0.0;
-                    if (getPostModel?.comments.length != null) {
-                      commentheight = getPostModel!.comments.length * 0.12;
-                    }
-                    if (commentheight > 0.5) {
-                      commentheight > 0.5;
-                    }
-
                     String? filename = getPostModel!.file == null
                         ? 'Nincs fájl feltöltve'
                         : getPostModel.file?.name;
@@ -170,7 +162,6 @@ class SinglePostScreen extends StatelessWidget {
                             ]),
                             getPostModel.comments.isNotEmpty
                                 ? CommentBody(
-                                    commentheight: commentheight,
                                     getpost: getPostModel,
                                     isloggedin: isloggedin)
                                 : const SizedBox.shrink(),

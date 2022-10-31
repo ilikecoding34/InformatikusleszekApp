@@ -42,6 +42,32 @@ class _CommentState extends State<CommentTile> {
     );
   }
 
+  deleteComment() {
+    Provider.of<CommentService>(context, listen: false)
+        .deleteComment(datas: datas)
+        .then((value) => Provider.of<PostService>(context, listen: false)
+            .getPost(id: value));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(messageSnackBar("Komment törölve"));
+  }
+
+  modifyComment(bool editstate, String controllertext) {
+    isEdit = editstate;
+    datas['content'] = controllertext;
+    Provider.of<CommentService>(context, listen: false)
+        .modifyComment(datas: datas)
+        .then((value) => Provider.of<PostService>(context, listen: false)
+            .getPost(id: value));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(messageSnackBar("Mósodítás elmentve"));
+  }
+
+  changeToEdit() {
+    setState(() {
+      isEdit = !isEdit!;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -57,33 +83,13 @@ class _CommentState extends State<CommentTile> {
             ? Row(
                 children: [
                   IconButton(
-                      onPressed: () => setState(() {
-                            isEdit = !isEdit!;
-                          }),
+                      onPressed: () => changeToEdit(),
                       icon: const Icon(Icons.edit)),
                   IconButton(
-                      onPressed: () {
-                        isEdit = false;
-                        datas['content'] = controller.text;
-                        Provider.of<CommentService>(context, listen: false)
-                            .modifyComment(datas: datas)
-                            .then((value) =>
-                                Provider.of<PostService>(context, listen: false)
-                                    .getPost(id: value));
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            messageSnackBar("Mósodítás elmentve"));
-                      },
+                      onPressed: () => modifyComment(false, controller.text),
                       icon: const Icon(Icons.save)),
                   IconButton(
-                      onPressed: () {
-                        Provider.of<CommentService>(context, listen: false)
-                            .deleteComment(datas: datas)
-                            .then((value) =>
-                                Provider.of<PostService>(context, listen: false)
-                                    .getPost(id: value));
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(messageSnackBar("Komment törölve"));
-                      },
+                      onPressed: () => deleteComment(),
                       icon: const Icon(Icons.delete))
                 ],
               )
