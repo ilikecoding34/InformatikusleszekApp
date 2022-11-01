@@ -3,13 +3,9 @@ import 'package:blog/models/post_model.dart';
 import 'package:blog/screens/editpost_page.dart';
 import 'package:blog/screens/postlist_page.dart';
 import 'package:blog/services/auth_service.dart';
-import 'package:blog/services/comment_service.dart';
 import 'package:blog/services/post_service.dart';
-import 'package:blog/services/sharedpreferences_service.dart';
 import 'package:blog/widgets/circle_widget.dart';
 import 'package:blog/widgets/comment_list_body.dart';
-import 'package:blog/widgets/comment_list.dart';
-import 'package:blog/widgets/new_comment_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -17,7 +13,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'login_page.dart';
 
 class SinglePostScreen extends StatelessWidget {
-  SinglePostScreen({required this.title});
+  SinglePostScreen({Key? key, required this.title}) : super(key: key);
 
   final String title;
   TextEditingController posttitlecontroller = TextEditingController();

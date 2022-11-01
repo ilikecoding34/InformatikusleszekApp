@@ -61,15 +61,15 @@ class _CircleState extends State<Circle> with SingleTickerProviderStateMixin {
         child: SlideTransition(
           position: _offsetAnimation,
           child: Container(
-            width: size == null ? 10 : size,
-            height: size == null ? 10 : size,
+            width: size,
+            height: size,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
                   color: Colors.blue,
-                  blurRadius: size == null ? 10 : size,
-                  spreadRadius: size == null ? 10 : size,
+                  blurRadius: size,
+                  spreadRadius: size,
                 ),
               ],
             ),

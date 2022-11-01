@@ -1,6 +1,5 @@
 import 'package:blog/config/ui_config.dart';
 import 'package:blog/services/sharedpreferences_service.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ThemeService extends ChangeNotifier {

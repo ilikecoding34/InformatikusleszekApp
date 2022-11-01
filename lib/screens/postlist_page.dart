@@ -1,3 +1,4 @@
+import 'package:blog/config/ui_config.dart';
 import 'package:blog/services/auth_service.dart';
 import 'package:blog/services/post_service.dart';
 import 'package:blog/services/sharedpreferences_service.dart';
@@ -7,6 +8,7 @@ import 'package:blog/widgets/post_list_container_widget.dart';
 import 'package:blog/widgets/refresh_widget.dart';
 import 'package:blog/widgets/tags_chip_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class PostListScreen extends StatefulWidget {
@@ -21,6 +23,7 @@ class _PostListScreenState extends State<PostListScreen> {
   double startpoint = 0.0;
   double distance = 0.0;
   bool isTop = false;
+  bool topViewOrder = false;
   List<dynamic> loadedposts = [];
 
   PreferencesService shared = PreferencesService();
@@ -34,13 +37,32 @@ class _PostListScreenState extends State<PostListScreen> {
     String userid = await shared.readUserId();
     userid.isNotEmpty
         ? Provider.of<AuthService>(context, listen: false).loginUser()
-        : null;
+        : '0';
+  }
+
+  getPermissions() async {
+    // You can request multiple permissions at once.
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.requestInstallPackages,
+      Permission.storage,
+      //add more permission to request here.
+    ].request();
+
+    if (statuses[Permission.storage]!.isDenied) {
+      //check each permission status after.
+      print("Location permission is denied.");
+    }
+
+    if (statuses[Permission.requestInstallPackages]!.isDenied) {
+      //check each permission status after.
+      print("Camera permission is denied.");
+    }
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    getPermissions();
     themeLoad();
     userLoad();
     Provider.of<PostService>(context, listen: false).getallPostnewversion();
@@ -63,6 +85,19 @@ class _PostListScreenState extends State<PostListScreen> {
           if (post.postlist.isNotEmpty) {
             return Column(
               children: [
+                Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: ElevatedButton(
+                      style: UIconfig.buttonBasicStyle,
+                      onPressed: () {
+                        if (mounted) {
+                          topViewOrder = !topViewOrder;
+                          post.orderTopViewed(topViewOrder);
+                        }
+                      },
+                      child: const Text("Legtöbb megtekintés",
+                          style: TextStyle(fontSize: UIconfig.mySize)),
+                    )),
                 TagsChip(
                   post: post,
                 ),
@@ -78,6 +113,25 @@ class _PostListScreenState extends State<PostListScreen> {
                 post.getShowAll
                     ? const Text('Minden bejegyzés megjelenítve')
                     : const SizedBox.shrink(),
+              ],
+            );
+          } else if (post.error != null) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                    alignment: Alignment.center,
+                    width: double.infinity,
+                    child: const Text('Hiba a betöltés közben',
+                        style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red))),
+                ElevatedButton(
+                    onPressed: () =>
+                        Provider.of<PostService>(context, listen: false)
+                            .getallPostnewversion(),
+                    child: const Text('Újra'))
               ],
             );
           } else {

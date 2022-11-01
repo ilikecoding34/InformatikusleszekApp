@@ -1,6 +1,8 @@
 import 'package:blog/config/http_config.dart';
+import 'package:blog/models/comment_model.dart';
 import 'package:blog/models/post_model.dart';
 import 'package:blog/models/tag_model.dart';
+import 'package:blog/models/user_model.dart';
 import 'package:blog/services/sharedpreferences_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -20,6 +22,8 @@ class PostService extends ChangeNotifier {
   double begin = 0.0;
   int maxPostNumber = 10;
   double end = 0.0;
+  var _adat;
+  var error;
   List<String> tagFilterList = [];
   final List<int> _tagselected = [];
   List<dynamic> postlist = [];
@@ -110,6 +114,8 @@ class PostService extends ChangeNotifier {
   }
 
   Future getallPostnewversion() async {
+    error = null;
+    notifyListeners();
     try {
       api.response = await api.dio.get(
         '/postsnewversion',
@@ -118,23 +124,26 @@ class PostService extends ChangeNotifier {
       setShowAll = false;
       filteredposts.clear();
       postlist.clear();
-      var _adat = api.response!.data;
+      _adat = api.response!.data;
       postlist = _adat[0].map((e) => PostModel.fromJson(e)).toList();
       filteredposts = postlist.sublist(0, maxPostNumber);
       _taglist = _adat[1].map((e) => TagModel.fromJson(e)).toList();
 
       notifyListeners();
     } catch (e) {
-      // print(e);
+      error = e;
+      notifyListeners();
     }
   }
 
-  orderTopViewed(bool original) {
-    if (original) {
-      filteredposts = postlist;
+  orderTopViewed(bool toporder) {
+    postlist = _adat[0].map((e) => PostModel.fromJson(e)).toList();
+    if (toporder) {
+      filteredposts.sort((a, b) => b.view.compareTo(a.view));
     } else {
-      postlist.sort();
+      filteredposts = postlist;
     }
+
     notifyListeners();
   }
 

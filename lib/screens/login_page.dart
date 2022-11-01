@@ -22,6 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
     _email = TextEditingController();
     _name = TextEditingController();
@@ -99,7 +100,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             authService.changeToLogin(),
                             namevisible = false,
                           },
-                      child: const Text('Bejelentkezés'))),
+                      child: const Text('Bejelentkezés',
+                          style: TextStyle(fontSize: UIconfig.mySize)))),
               Padding(
                   padding: const EdgeInsets.all(10),
                   child: ElevatedButton(

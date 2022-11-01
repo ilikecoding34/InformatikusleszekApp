@@ -2,13 +2,11 @@ import 'package:blog/config/http_config.dart';
 import 'package:blog/services/sharedpreferences_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
 
 class AuthService extends ChangeNotifier {
   final shared = PreferencesService();
   final HttpConfig api = HttpConfig();
-  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   UserModel? _user;
 
   bool _isloggedin = false;
