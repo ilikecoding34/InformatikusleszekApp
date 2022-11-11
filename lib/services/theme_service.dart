@@ -5,16 +5,16 @@ import 'package:flutter/material.dart';
 class ThemeService extends ChangeNotifier {
   ThemeData _themeData = UIconfig.lightTheme;
   PreferencesService shared = PreferencesService();
-  bool isDarkMode = true;
+  bool _isDarkMode = true;
 
   getTheme() => _themeData;
 
-  getMode() => isDarkMode;
+  isDarkMode() => _isDarkMode;
 
   changeMode(bool value) async {
-    isDarkMode = value;
-    _themeData = isDarkMode ? UIconfig.darkTheme : UIconfig.lightTheme;
-    shared.storeThemeType(isDarkMode);
+    _isDarkMode = value;
+    _themeData = _isDarkMode ? UIconfig.darkTheme : UIconfig.lightTheme;
+    shared.storeThemeType(_isDarkMode);
     notifyListeners();
   }
 }

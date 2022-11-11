@@ -159,13 +159,18 @@ class _LoginScreenState extends State<LoginScreen> {
                             .verificationsent,
                       ),
                       Visibility(
-                        child:
-                            InputFieldWidget(title: 'Név', controller: _name),
+                        child: InputFieldWidget(
+                          title: 'Név',
+                          controller: _name,
+                          type: TextInputType.name,
+                        ),
                         visible: !loggedin && namevisible,
                       ),
                       Visibility(
                         child: InputFieldWidget(
-                            title: 'Email', controller: _email),
+                            title: 'Email',
+                            controller: _email,
+                            type: TextInputType.emailAddress),
                         visible: !loggedin,
                       ),
                       Visibility(
@@ -224,11 +229,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                   'email': _email.text,
                                   'password': _password.text,
                                 };
-                                bool loginresponse =
+                                dynamic loginresponse =
                                     await authService.login(creds: creds);
-                                if (loginresponse != null ||
-                                    loginresponse == true) {
-                                  loginValidated;
+                                if (loginresponse == true) {
+                                  loginValidated();
                                 } else {
                                   loginFailed();
                                 }

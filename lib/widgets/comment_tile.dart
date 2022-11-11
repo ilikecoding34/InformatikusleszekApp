@@ -75,10 +75,10 @@ class _CommentState extends State<CommentTile> {
       children: [
         Expanded(
             child: InputFieldWidget(
-          enable: isEdit ?? true,
-          controller: controller,
-          title: '',
-        )),
+                enable: isEdit ?? true,
+                controller: controller,
+                title: '',
+                type: TextInputType.text)),
         widget.isloggedin
             ? Row(
                 children: [

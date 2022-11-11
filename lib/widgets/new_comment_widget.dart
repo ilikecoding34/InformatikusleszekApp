@@ -45,7 +45,9 @@ class NewComment extends StatelessWidget {
       Container(
         padding: const EdgeInsets.all(10),
         child: InputFieldWidget(
-            controller: newcommentcontroller, title: 'Új hozzászólás'),
+            controller: newcommentcontroller,
+            title: 'Új hozzászólás',
+            type: TextInputType.text),
       ),
       Container(
           padding: const EdgeInsets.all(10),

@@ -24,12 +24,13 @@ class _PostListScreenState extends State<PostListScreen> {
   double distance = 0.0;
   bool isTop = false;
   bool topViewOrder = false;
+  late bool darkModeOn;
   List<dynamic> loadedposts = [];
 
   PreferencesService shared = PreferencesService();
 
   Future themeLoad() async {
-    bool darkModeOn = await shared.readThemeType() ?? true;
+    darkModeOn = await shared.readThemeType() ?? true;
     Provider.of<ThemeService>(context, listen: false).changeMode(darkModeOn);
   }
 
@@ -43,7 +44,6 @@ class _PostListScreenState extends State<PostListScreen> {
   getPermissions() async {
     // You can request multiple permissions at once.
     Map<Permission, PermissionStatus> statuses = await [
-      Permission.requestInstallPackages,
       Permission.storage,
       //add more permission to request here.
     ].request();
@@ -51,11 +51,6 @@ class _PostListScreenState extends State<PostListScreen> {
     if (statuses[Permission.storage]!.isDenied) {
       //check each permission status after.
       print("Location permission is denied.");
-    }
-
-    if (statuses[Permission.requestInstallPackages]!.isDenied) {
-      //check each permission status after.
-      print("Camera permission is denied.");
     }
   }
 
@@ -88,7 +83,20 @@ class _PostListScreenState extends State<PostListScreen> {
                 Padding(
                     padding: const EdgeInsets.all(10),
                     child: ElevatedButton(
-                      style: UIconfig.buttonBasicStyle,
+                      style: ElevatedButton.styleFrom(
+                          elevation: 10.0,
+                          shadowColor:
+                              Provider.of<ThemeService>(context).isDarkMode()
+                                  ? const ColorScheme.light().background
+                                  : const ColorScheme.dark().background,
+                          backgroundColor: Colors.cyan,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                          textStyle: const TextStyle(
+                              fontSize: 30, fontWeight: FontWeight.bold)),
                       onPressed: () {
                         if (mounted) {
                           topViewOrder = !topViewOrder;

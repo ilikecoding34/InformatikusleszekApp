@@ -3,6 +3,7 @@ import 'package:blog/screens/postlist_page.dart';
 import 'package:blog/services/post_service.dart';
 import 'package:blog/services/sharedpreferences_service.dart';
 import 'package:blog/widgets/input_widget.dart';
+import 'package:blog/widgets/post_body.dart';
 import 'package:blog/widgets/tags_chip_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -21,7 +22,7 @@ class NewPostPage extends StatelessWidget {
 
   TextEditingController title = TextEditingController();
   TextEditingController link = TextEditingController();
-  TextEditingController body = TextEditingController();
+  TextEditingController content = TextEditingController();
 
   List<dynamic> taglist = [];
 
@@ -90,9 +91,11 @@ class NewPostPage extends StatelessWidget {
             reverse: true,
             child: Column(
               children: [
-                InputFieldWidget(title: 'Cím', controller: title),
-                InputFieldWidget(title: 'Url - opcionális', controller: link),
-                InputFieldWidget(title: 'Tartalom', controller: body),
+                PostBody(
+                  titlectrl: title,
+                  urctrl: link,
+                  contentctrl: content,
+                ),
                 TagsChip(
                   post: postService!,
                 ),
@@ -108,7 +111,7 @@ class NewPostPage extends StatelessWidget {
                               'userid': await shareddatas.readUserId(),
                               'title': title.text,
                               'link': link.text,
-                              'content': body.text,
+                              'content': content.text,
                               'tags': taglist,
                               'category': 1
                             };

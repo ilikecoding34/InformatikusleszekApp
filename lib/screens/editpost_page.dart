@@ -5,6 +5,7 @@ import 'package:blog/services/auth_service.dart';
 import 'package:blog/services/post_service.dart';
 import 'package:blog/services/sharedpreferences_service.dart';
 import 'package:blog/widgets/input_widget.dart';
+import 'package:blog/widgets/post_body.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,7 +13,7 @@ class EditPostScreen extends StatelessWidget {
   EditPostScreen({Key? key}) : super(key: key);
 
   TextEditingController posttitlecontroller = TextEditingController();
-  TextEditingController postbodycontroller = TextEditingController();
+  TextEditingController postcontentcontroller = TextEditingController();
   TextEditingController postlinkcontroller = TextEditingController();
   TextEditingController newcommentcontroller = TextEditingController();
   List<TextEditingController> commentcontroller = [];
@@ -53,7 +54,7 @@ class EditPostScreen extends StatelessWidget {
                         'userid': await shareddatas.readUserId(),
                         'title': posttitlecontroller.text,
                         'link': postlinkcontroller.text,
-                        'content': postbodycontroller.text,
+                        'content': postcontentcontroller.text,
                         'tags': selectedtags,
                         'category': 1
                       };
@@ -86,7 +87,7 @@ class EditPostScreen extends StatelessWidget {
           if (!post.getIsloading) {
             posttitlecontroller.text = getpost!.title;
             postlinkcontroller.text = getpost.link ?? '';
-            postbodycontroller.text = getpost.body;
+            postcontentcontroller.text = getpost.body;
             String filename = getpost.file == null
                 ? 'Nincs fájl feltöltve'
                 : getpost.file!.name!;
@@ -95,13 +96,11 @@ class EditPostScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    InputFieldWidget(
-                        title: 'Cím', controller: posttitlecontroller),
-                    InputFieldWidget(
-                        title: 'Url - opcionális',
-                        controller: postlinkcontroller),
-                    InputFieldWidget(
-                        title: 'Tartalom', controller: postbodycontroller),
+                    PostBody(
+                      titlectrl: posttitlecontroller,
+                      urctrl: postlinkcontroller,
+                      contentctrl: postcontentcontroller,
+                    ),
                     getpost.file != null
                         ? Padding(
                             padding: const EdgeInsets.only(top: 10, bottom: 10),

@@ -65,7 +65,10 @@ class VerificationScreen extends StatelessWidget {
             Visibility(
               child: Padding(
                   padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                  child: InputFieldWidget(controller: _email, title: "Email")),
+                  child: InputFieldWidget(
+                      controller: _email,
+                      title: "Email",
+                      type: TextInputType.emailAddress)),
               visible: lateverification,
             ),
             Padding(
