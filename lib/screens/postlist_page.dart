@@ -107,9 +107,11 @@ class _PostListScreenState extends State<PostListScreen> {
                           topViewOrder ? "Időrend" : "Legtöbb megtekintés",
                           style: const TextStyle(fontSize: UIconfig.mySize)),
                     )),
-                TagsChip(
-                  post: post,
-                ),
+                Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: TagsChip(
+                      post: post,
+                    )),
                 RefreshList(
                     swiped: swiped,
                     numberOfLines: numberOfLines,
