@@ -114,8 +114,8 @@ class _PostListContainerState extends State<PostListContainer> {
             child: Stack(
               children: [
                 ListView.separated(
-                    separatorBuilder: (context, index) => const Divider(
-                          color: Colors.black,
+                    separatorBuilder: (context, index) => const SizedBox(
+                          height: 10,
                         ),
                     padding: const EdgeInsets.all(8),
                     controller: controller,
@@ -130,7 +130,7 @@ class _PostListContainerState extends State<PostListContainer> {
                           },
                         );
                       } else {
-                        return Container();
+                        return const SizedBox.shrink();
                       }
                     }),
                 AnimatedContainer(

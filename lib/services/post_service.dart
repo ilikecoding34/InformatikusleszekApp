@@ -100,8 +100,8 @@ class PostService extends ChangeNotifier {
   Future loadMorePosts() async {
     filteredposts.clear();
 
-    if ((maxPostNumber + 10) <= postlist.length) {
-      maxPostNumber = maxPostNumber + 10;
+    if ((maxPostNumber + 20) <= postlist.length) {
+      maxPostNumber = maxPostNumber + 20;
       filteredposts = postlist.sublist(0, maxPostNumber);
     } else {
       filteredposts = postlist;

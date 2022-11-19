@@ -103,8 +103,9 @@ class _PostListScreenState extends State<PostListScreen> {
                           post.orderTopViewed(topViewOrder);
                         }
                       },
-                      child: const Text("Legtöbb megtekintés",
-                          style: TextStyle(fontSize: UIconfig.mySize)),
+                      child: Text(
+                          topViewOrder ? "Időrend" : "Legtöbb megtekintés",
+                          style: const TextStyle(fontSize: UIconfig.mySize)),
                     )),
                 TagsChip(
                   post: post,

@@ -1,5 +1,7 @@
 import 'package:blog/models/post_model.dart';
+import 'package:blog/services/theme_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PostListItemBody extends StatelessWidget {
   const PostListItemBody({
@@ -22,9 +24,11 @@ class PostListItemBody extends StatelessWidget {
             Container(
                 width: screenwith,
                 child: Text(postitem.title,
-                    style: const TextStyle(
-                      fontSize: 20.0,
-                    ))),
+                    style: TextStyle(
+                        fontSize: 20.0,
+                        color: Provider.of<ThemeService>(context).isDarkMode()
+                            ? Colors.black
+                            : Colors.black))),
             Container(
               padding: const EdgeInsets.only(top: 5.0),
               width: screenwith,
@@ -43,11 +47,14 @@ class PostListItemBody extends StatelessWidget {
         ),
         Column(
           children: [
-            Text(postitem.user!.name),
+            Text(postitem.user!.name,
+                style: const TextStyle(color: Colors.black)),
             const SizedBox(height: 10),
-            Text(postitem.created.substring(0, 10)),
+            Text(postitem.created.substring(0, 10),
+                style: const TextStyle(color: Colors.black)),
             const SizedBox(height: 10),
-            Text('Megtekintés: ${postitem.view}'),
+            Text('Megtekintés: ${postitem.view}',
+                style: const TextStyle(color: Colors.black)),
           ],
         )
       ],
