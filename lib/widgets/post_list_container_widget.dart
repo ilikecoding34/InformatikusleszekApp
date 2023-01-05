@@ -2,6 +2,7 @@ import 'package:blog/models/post_model.dart';
 import 'package:blog/screens/singlepost_page.dart';
 import 'package:blog/services/post_service.dart';
 import 'package:blog/widgets/post_list_item_widget.dart';
+import 'package:blog/widgets/slide_animation_widgt.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -123,11 +124,13 @@ class _PostListContainerState extends State<PostListContainer> {
                     itemBuilder: (BuildContext context, int index) {
                       if (mounted) {
                         PostModel postitem = post.filteredposts[index];
-                        return PostListItem(
-                          postitem: postitem,
-                          openitem: () {
-                            toSinglePage(postitem);
-                          },
+                        return SlidingWidget(
+                          child: PostListItem(
+                            postitem: postitem,
+                            openitem: () {
+                              toSinglePage(postitem);
+                            },
+                          ),
                         );
                       } else {
                         return const SizedBox.shrink();

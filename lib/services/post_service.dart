@@ -18,7 +18,7 @@ class PostService extends ChangeNotifier {
   bool _isStoreSuccess = false;
   double calculatedswipe = 0.0;
   double begin = 0.0;
-  int maxPostNumber = 10;
+  int maxPostNumber = 40;
   double end = 0.0;
   var _adat;
   var error;
@@ -100,8 +100,8 @@ class PostService extends ChangeNotifier {
   Future loadMorePosts() async {
     filteredposts.clear();
 
-    if ((maxPostNumber + 20) <= postlist.length) {
-      maxPostNumber = maxPostNumber + 20;
+    if ((maxPostNumber + 40) <= postlist.length) {
+      maxPostNumber = maxPostNumber + 40;
       filteredposts = postlist.sublist(0, maxPostNumber);
     } else {
       filteredposts = postlist;
@@ -118,7 +118,7 @@ class PostService extends ChangeNotifier {
       api.response = await api.dio.get(
         '/postsnewversion',
       );
-      maxPostNumber = 10;
+      maxPostNumber = 40;
       setShowAll = false;
       filteredposts.clear();
       postlist.clear();
